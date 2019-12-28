@@ -131,13 +131,13 @@ namespace Routine.APi.Services
 
         public void UpdateCompany(Company company)
         {
-            //无需显示的代码
+            //无需显式地声明
             //_context.Entry(company).State = EntityState.Modified;
         }
 
         public void UpdateEmployee(Employee employee)
         {
-            //无需显示的代码
+            //无需显式地声明
             //_context.Entry(employee).State = EntityState.Modified;
         }
 
