@@ -66,7 +66,7 @@ namespace Routine.APi.Controllers
         public async Task<IActionResult> GetCompanies()
         {
             var companies = await _companyRepository.GetCompaniesAsync();
-            return Ok(companies);  //200
+            return Ok(companies);  //OK() 返回状态码200
         }
 
         [HttpGet("{companyId}")]  //还可用 [Route("{companyId}")]
@@ -76,7 +76,7 @@ namespace Routine.APi.Controllers
             //var exist = await _companyRepository.CompanyExistsAsync(companyId);
             //if (!exist)
             //{
-            //    return NotFound(); //404
+            //    return NotFound(); //返回状态码404
             //}
             //var company = await _companyRepository.GetCompanyAsync(companyId);
             //return Ok(company);
@@ -86,7 +86,7 @@ namespace Routine.APi.Controllers
             var company = await _companyRepository.GetCompanyAsync(companyId);
             if (company == null)
             {
-                return NotFound();  //404
+                return NotFound();  //返回状态码404
             }
             return Ok(company);
         }
