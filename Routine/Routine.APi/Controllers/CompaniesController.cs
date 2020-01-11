@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Routine.APi.Models;
 using Routine.APi.Services;
 using System;
 using System.Collections.Generic;
@@ -55,40 +57,46 @@ namespace Routine.APi.Controllers
     public class CompaniesController:ControllerBase
     {
         private readonly ICompanyRepository _companyRepository;
+        private readonly IMapper _mapper;
 
-        public CompaniesController(ICompanyRepository companyRepository)
+        public CompaniesController(ICompanyRepository companyRepository,IMapper mapper)
         {
-            this._companyRepository = companyRepository ??
+            _companyRepository = companyRepository ??
                                         throw new ArgumentNullException(nameof(companyRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCompanies()
+        public async Task<IActionResult> GetCompanies() //Task<IActionResult> = Task<ActionResult<List<CompanyDto>>>
         {
             var companies = await _companyRepository.GetCompaniesAsync();
-            return Ok(companies);  //OK() 返回状态码200
+
+            //不使用 AutoMapper 
+            //var companyDtos = new List<CompanyDto>();
+            //foreach(var company in companies)
+            //{
+            //    companyDtos.Add(new CompanyDto
+            //    {
+            //        Id = company.Id,
+            //        Name = company.Name
+            //    });
+            //}
+
+            //使用 AutoMapper
+            var companyDtos = _mapper.Map<IEnumerable<CompanyDto>>(companies);
+
+            return Ok(companyDtos);  //OK() 返回状态码200
         }
 
         [HttpGet("{companyId}")]  //还可用 [Route("{companyId}")]
         public async Task<IActionResult> GetCompany(Guid companyId)
         {
-            //不适合高并发的方法：
-            //var exist = await _companyRepository.CompanyExistsAsync(companyId);
-            //if (!exist)
-            //{
-            //    return NotFound(); //返回状态码404
-            //}
-            //var company = await _companyRepository.GetCompanyAsync(companyId);
-            //return Ok(company);
-            //
-
-            //略有改善的方法：
             var company = await _companyRepository.GetCompanyAsync(companyId);
             if (company == null)
             {
                 return NotFound();  //返回状态码404
             }
-            return Ok(company);
+            return Ok(_mapper.Map<CompanyDto>(company));
         }
 
     }

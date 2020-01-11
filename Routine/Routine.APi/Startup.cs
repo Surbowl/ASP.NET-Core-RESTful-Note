@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -57,6 +58,9 @@ namespace Routine.APi
             //{
             //    options.ReturnHttpNotAcceptable = true;
             //}).AddXmlDataContractSerializerFormatters();
+
+            //使用 AutoMapper，扫描当前应用域的所有 Assemblies 寻找 AutoMapper 的配置文件
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             //AddScoped 针对每一个 HTTP 请求都会建立一个新的实例
             services.AddScoped<ICompanyRepository, CompanyRepository>();
