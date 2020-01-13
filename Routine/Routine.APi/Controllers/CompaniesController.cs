@@ -42,6 +42,16 @@ using System.Threading.Tasks;
  * 500 - Internal Server Error 服务器出现错误
  */
 
+/*
+ * 绑定数据源：
+ * [FromBody] 
+ * [FromForm] 
+ * [FromHeader]（略）
+ * [FromQuery] 
+ * [FromRoute] 
+ * [FromService]（略）
+ */
+
 namespace Routine.APi.Controllers
 {
     /*[ApiController]属性并不是强制要求的，但是它会使开发体验更好
@@ -67,6 +77,7 @@ namespace Routine.APi.Controllers
         }
 
         [HttpGet]
+        [HttpHead] //添加对 Http Head 的支持，使用 Head 请求时不会返回 Body
         public async Task<IActionResult> GetCompanies() //Task<IActionResult> = Task<ActionResult<List<CompanyDto>>>
         {
             var companies = await _companyRepository.GetCompaniesAsync();

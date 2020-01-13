@@ -15,7 +15,7 @@ namespace Routine.APi.Services
         void UpdateCompany(Company company);
         void DeleteCompany(Company company);
         Task<bool> CompanyExistsAsync(Guid companyId);
-        Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId);
+        Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId, string genderDisplay,string q);
         Task<Employee> GetEmployeeAsync(Guid companyId, Guid employeeId);
         void AddEmployee(Guid companyId, Employee employee);
         void UpdateEmployee(Employee employee);
