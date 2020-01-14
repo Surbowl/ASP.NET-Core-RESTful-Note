@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Routine.APi.DtoParameters;
 using Routine.APi.Models;
 using Routine.APi.Services;
 using System;
@@ -78,9 +79,9 @@ namespace Routine.APi.Controllers
 
         [HttpGet]
         [HttpHead] //添加对 Http Head 的支持，使用 Head 请求时不会返回 Body
-        public async Task<IActionResult> GetCompanies() //Task<IActionResult> = Task<ActionResult<List<CompanyDto>>>
+        public async Task<IActionResult> GetCompanies([FromQuery]CompanyDtoParameters parameters) //Task<IActionResult> = Task<ActionResult<List<CompanyDto>>>
         {
-            var companies = await _companyRepository.GetCompaniesAsync();
+            var companies = await _companyRepository.GetCompaniesAsync(parameters);
 
             //不使用 AutoMapper 
             //var companyDtos = new List<CompanyDto>();
