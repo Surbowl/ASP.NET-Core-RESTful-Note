@@ -3,6 +3,9 @@ using Routine.APi.Entities;
 using Routine.APi.Models;
 using System;
 
+/// <summary>
+/// AutoMapper 映射关系 配置文件
+/// </summary>
 namespace Routine.APi.Profiles
 {
     public class EmployeeProfile : Profile

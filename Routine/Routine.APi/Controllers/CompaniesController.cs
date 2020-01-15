@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Routine.APi.DtoParameters;
+using Routine.APi.Entities;
 using Routine.APi.Models;
 using Routine.APi.Services;
 using System;
@@ -9,12 +10,18 @@ using System.Linq;
 using System.Threading.Tasks;
 
 /*
- * HTTP请求：
- * GET      - 查询
- * POST     - 创建/添加
- * PATCH    - 局部修改/更新
- * PUT      - 如果存在就替换，不存在则创建
- * DELETE   - 移除/删除
+ * HTTP方法：                                 |   安全   幂等
+ *                                            |
+ * GET      - 查询                            |    Y     Y
+ * POST     - 创建/添加                       |     N     N
+ * PATCH    - 局部修改/更新                    |    N     N
+ * PUT      - 如果存在就替换，不存在则创建      |     N     Y
+ * DELETE   - 移除/删除                       |     N     Y
+ * OPTIONS  - 略                              |     Y     Y
+ * HEAD     - 略                              |     Y     Y
+ * 
+ * 安全性是指方法执行后并不会改变资源的表述
+ * 幂等性是指方法无论执行多少次都会得到同样的结果
  */
 
 /*
@@ -100,7 +107,7 @@ namespace Routine.APi.Controllers
             return Ok(companyDtos);  //OK() 返回状态码200
         }
 
-        [HttpGet("{companyId}")]  //还可用 [Route("{companyId}")]
+        [HttpGet("{companyId}",Name =nameof(GetCompany))]  //[Route("{companyId}")]
         public async Task<IActionResult> GetCompany(Guid companyId)
         {
             var company = await _companyRepository.GetCompanyAsync(companyId);
@@ -111,5 +118,23 @@ namespace Routine.APi.Controllers
             return Ok(_mapper.Map<CompanyDto>(company));
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateCompany([FromBody]CompanyAddDto company)  //Task<IActionResult> = Task<ActionResult<CompanyDto>
+        {
+            //老版本需要使用以下代码：
+            //新版使用 ApiController 属性以后，无需再手动检查
+            //if (company == null)
+            //{
+            //    return BadRequest(); //返回状态码400
+            //}
+
+            var entity = _mapper.Map<Company>(company);
+            _companyRepository.AddCompany(entity);
+            await _companyRepository.SaveAsync();
+            var returnDto = _mapper.Map<CompanyDto>(entity);
+            //返回状态码201
+            //通过使用 CreatedAtRoute 返回时可以在 Header 中添加一个地址（Loaction）
+            return CreatedAtRoute(nameof(GetCompany), new { companyId = returnDto.Id }, returnDto);
+        }
     }
 }
