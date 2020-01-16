@@ -11,5 +11,8 @@ namespace Routine.APi.Models
     {
         public string Name { get; set; }
         public string Introduction { get; set; }
+
+        //这种写法可以避免空引用异常
+        public ICollection<EmployeeAddDto> Employees { get; set; } = new List<EmployeeAddDto>();
     }
 }

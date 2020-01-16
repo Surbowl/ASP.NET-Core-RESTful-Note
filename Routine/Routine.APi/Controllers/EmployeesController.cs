@@ -39,7 +39,7 @@ namespace Routine.APi.Controllers
             }
         }
 
-        [HttpGet("{employeeId}")]
+        [HttpGet("{employeeId}",Name =nameof(GetEmployeesForCompany))]
         public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,Guid employeeId)
         {
             if (await _companyRepository.CompanyExistsAsync(companyId))
@@ -56,6 +56,24 @@ namespace Routine.APi.Controllers
             {
                 return NotFound();
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateEmployeeForCompany([FromRoute]Guid companyId,[FromBody]EmployeeAddDto employee)
+        //此处的 [FromRoute] 与 [FromBody] 其实不指定也可以
+        {
+            if (! await _companyRepository.CompanyExistsAsync(companyId))
+            {
+                return NotFound();
+            }
+            var entity = _mapper.Map<Employee>(employee);
+            _companyRepository.AddEmployee(companyId, entity);
+            await _companyRepository.SaveAsync();
+            var returnDto = _mapper.Map<EmployeeDto>(entity);
+            return CreatedAtAction(
+                nameof(GetEmployeesForCompany),
+                new { companyId = returnDto.CompanyId, employeeId = returnDto.Id },
+                returnDto);
         }
     }
 }

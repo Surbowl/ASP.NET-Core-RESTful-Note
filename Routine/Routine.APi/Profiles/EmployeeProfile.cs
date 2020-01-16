@@ -16,6 +16,7 @@ namespace Routine.APi.Profiles
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
                 .ForMember(dest => dest.GenderDisplay, opt => opt.MapFrom(src => src.Gender.ToString()))
                 .ForMember(dest => dest.Age, opt => opt.MapFrom(src => GetAge(src.DateOfBirth)));
+            CreateMap<EmployeeAddDto, Employee>();
         }
 
         /// <summary>
