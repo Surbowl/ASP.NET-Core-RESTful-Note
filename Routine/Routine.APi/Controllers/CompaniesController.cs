@@ -17,8 +17,8 @@ using System.Threading.Tasks;
  * PATCH    - 局部修改/更新                    |    N     N
  * PUT      - 如果存在就替换，不存在则创建      |     N     Y
  * DELETE   - 移除/删除                       |     N     Y
- * OPTIONS  - 略                              |     Y     Y
- * HEAD     - 略                              |     Y     Y
+ * OPTIONS  - 获取 Web API 的通信选项的信息    |     Y     Y
+ * HEAD     - 只请求页面的首部                 |     Y     Y
  * 
  * 安全性是指方法执行后并不会改变资源的表述
  * 幂等性是指方法无论执行多少次都会得到同样的结果
@@ -135,6 +135,13 @@ namespace Routine.APi.Controllers
             //返回状态码201
             //通过使用 CreatedAtRoute 返回时可以在 Header 中添加一个地址（Loaction）
             return CreatedAtRoute(nameof(GetCompany), new { companyId = returnDto.Id }, returnDto);
+        }
+
+        [HttpOptions]
+        public IActionResult GetCompaniesOptions()
+        {
+            Response.Headers.Add("Allow", "GET,POST,OPTIONS");
+            return Ok();
         }
     }
 }
