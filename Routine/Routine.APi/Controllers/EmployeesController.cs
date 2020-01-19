@@ -25,7 +25,9 @@ namespace Routine.APi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,[FromQuery(Name ="gender")]string genderDisplay, [FromQuery]string q)
+        public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
+                                                                [FromQuery(Name ="gender")]string genderDisplay,
+                                                                [FromQuery]string q)
         {
             if (await _companyRepository.CompanyExistsAsync(companyId))
             {
@@ -59,8 +61,9 @@ namespace Routine.APi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateEmployeeForCompany([FromRoute]Guid companyId,[FromBody]EmployeeAddDto employee)
-        //此处的 [FromRoute] 与 [FromBody] 其实不指定也可以
+        public async Task<IActionResult> CreateEmployeeForCompany([FromRoute]Guid companyId,
+                                                                  [FromBody]EmployeeAddDto employee)
+        //此处的 [FromRoute] 与 [FromBody] 其实不指定也可以，会自动匹配
         {
             if (! await _companyRepository.CompanyExistsAsync(companyId))
             {
@@ -74,6 +77,36 @@ namespace Routine.APi.Controllers
                 nameof(GetEmployeesForCompany),
                 new { companyId = returnDto.CompanyId, employeeId = returnDto.Id },
                 returnDto);
+        }
+
+        /// <summary>
+        /// 整体更新/替换，PUT不是安全的，但是幂等
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <param name="employeeId"></param>
+        /// <param name="employee"></param>
+        /// <returns></returns>
+        [HttpPut("{employeeId}")]
+        public async Task<IActionResult> UpdateEmployeeForCompany(Guid companyId,
+                                                                  Guid employeeId,
+                                                                  EmployeeUpdateDto employee)
+        {
+            if(!await _companyRepository.CompanyExistsAsync(companyId))
+            {
+                return NotFound();
+            }
+
+            var employeeEntity = await _companyRepository.GetEmployeeAsync(companyId, employeeId);
+            if (employeeEntity == null)
+            {
+                return NotFound();
+            }
+
+            //把 updateDto 映射到 entity
+            _mapper.Map(employee, employeeEntity);
+            _companyRepository.UpdateEmployee(employeeEntity);
+            await _companyRepository.SaveAsync();
+            return NoContent(); //返回状态码204
         }
     }
 }

@@ -22,3 +22,10 @@ namespace Routine.APi.Models
         public ICollection<EmployeeAddDto> Employees { get; set; } = new List<EmployeeAddDto>();
     }
 }
+
+/*
+ * 推荐使用第三方库 FluentValidation
+ * - 容易创建复杂的验证规则
+ * - 验证规则与 Model 分离
+ * - 容易进行单元测试
+ */

@@ -62,7 +62,7 @@ using System.Threading.Tasks;
 
 namespace Routine.APi.Controllers
 {
-    /*[ApiController]属性并不是强制要求的，但是它会使开发体验更好
+    /*[ApiController] 属性并不是强制要求的，但是它会使开发体验更好
      * 它会启用以下行为：
      * 1.要求使用属性路由（Attribute Routing）
      * 2.自动HTTP 400响应

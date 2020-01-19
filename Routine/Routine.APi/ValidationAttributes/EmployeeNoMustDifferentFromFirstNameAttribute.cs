@@ -10,10 +10,10 @@ namespace Routine.APi.ValidationAttributes
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             //var employeeAddDto = (EmployeeAddDto)value
-            var employeeAddDto = (EmployeeAddDto)validationContext.ObjectInstance;
+            var employeeAddDto = (EmployeeAddOrUpdateDto)validationContext.ObjectInstance;
             if (employeeAddDto.EmployeeNo == employeeAddDto.FirstName)
             {
-                return new ValidationResult(ErrorMessage, new[] { nameof(EmployeeAddDto) });
+                return new ValidationResult(ErrorMessage, new[] { nameof(EmployeeAddOrUpdateDto) });
             }
             return ValidationResult.Success;
         }
