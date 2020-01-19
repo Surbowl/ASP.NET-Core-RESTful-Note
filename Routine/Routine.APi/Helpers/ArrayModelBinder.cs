@@ -10,7 +10,7 @@ namespace Routine.APi.Helpers
     /// <summary>
     /// 自定义 Model 绑定器
     /// </summary>
-    public class ArrayModelBinder:IModelBinder
+    public class ArrayModelBinder : IModelBinder
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {

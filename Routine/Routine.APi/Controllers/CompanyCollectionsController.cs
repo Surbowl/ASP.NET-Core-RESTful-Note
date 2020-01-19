@@ -35,11 +35,13 @@ namespace Routine.APi.Controllers
                 return BadRequest();
             }
             var entities = await _companyRepository.GetCompaniesAsync(ids);
-            //这个写法有 BUG，ids.Count() 返回的居然是字符串长度
+
+            //这个写法有 BUG，ids.Count() 返回的居然是 Query 字符串长度
             //if (ids.Count() != entities.Count())
             //{
             //    return NotFound();
             //}
+
             var dtosToReturn = _mapper.Map<IEnumerable<CompanyDto>>(entities);
             return Ok(dtosToReturn);
         }
