@@ -10,15 +10,25 @@ using System.Linq;
 using System.Threading.Tasks;
 
 /*
- * HTTP方法：                                 |   安全   幂等
+ * HTTP方法：                                  |   安全   幂等
+ *                                             |
+ * GET      - 查询                             |    Y     Y
  *                                            |
- * GET      - 查询                            |    Y     Y
- * POST     - 创建/添加                       |     N     N
+ * POST     - 创建/添加                        |     N     N
+ *            服务器端负责 URI 的生成           |
+ *                                            |
  * PATCH    - 局部修改/更新                    |    N     N
- * PUT      - 如果存在就替换，不存在则创建      |     N     Y
- * DELETE   - 移除/删除                       |     N     Y
- * OPTIONS  - 获取 Web API 的通信选项的信息    |     Y     Y
- * HEAD     - 只请求页面的首部                 |     Y     Y
+ *                                            |
+ * PUT      - 如果存在就替换，不存在则创建       |     N     Y
+ *            如果 URI 存在，就更新资源         | 
+ *            如果 URI 不存在，就创建资源或     |
+ *            返回404（可选）                  |
+ *                                            |
+ * DELETE   - 移除/删除                        |     N     Y
+ *                                            |
+ * OPTIONS  - 获取 Web API 的通信选项的信息     |     Y     Y
+ *                                            |
+ * HEAD     - 只请求页面的首部                  |     Y     Y
  * 
  * 安全性是指方法执行后并不会改变资源的表述
  * 幂等性是指方法无论执行多少次都会得到同样的结果

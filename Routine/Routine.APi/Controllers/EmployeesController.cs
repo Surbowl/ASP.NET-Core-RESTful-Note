@@ -41,8 +41,8 @@ namespace Routine.APi.Controllers
             }
         }
 
-        [HttpGet("{employeeId}",Name =nameof(GetEmployeesForCompany))]
-        public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,Guid employeeId)
+        [HttpGet("{employeeId}",Name =nameof(GetEmployeeForCompany))]
+        public async Task<IActionResult> GetEmployeeForCompany(Guid companyId,Guid employeeId)
         {
             if (await _companyRepository.CompanyExistsAsync(companyId))
             {
@@ -73,10 +73,9 @@ namespace Routine.APi.Controllers
             _companyRepository.AddEmployee(companyId, entity);
             await _companyRepository.SaveAsync();
             var returnDto = _mapper.Map<EmployeeDto>(entity);
-            return CreatedAtAction(
-                nameof(GetEmployeesForCompany),
-                new { companyId = returnDto.CompanyId, employeeId = returnDto.Id },
-                returnDto);
+            return CreatedAtAction(nameof(GetEmployeeForCompany),
+                                    new { companyId = returnDto.CompanyId, employeeId = returnDto.Id },
+                                    returnDto);
         }
 
         /// <summary>
@@ -99,7 +98,18 @@ namespace Routine.APi.Controllers
             var employeeEntity = await _companyRepository.GetEmployeeAsync(companyId, employeeId);
             if (employeeEntity == null)
             {
-                return NotFound();
+                //不允许客户端生成 Guid
+                //return NotFound();
+
+                //允许客户端生成 Guid
+                var employeeToAddEntity = _mapper.Map<Employee>(employee);
+                employeeToAddEntity.Id = employeeId;
+                _companyRepository.AddEmployee(companyId, employeeToAddEntity);
+                await _companyRepository.SaveAsync();
+                var returnDto = _mapper.Map<EmployeeDto>(employeeToAddEntity);
+                return CreatedAtAction(nameof(GetEmployeeForCompany),
+                                        new { companyId = companyId, employeeId = employeeId },
+                                        returnDto);
             }
 
             //把 updateDto 映射到 entity
