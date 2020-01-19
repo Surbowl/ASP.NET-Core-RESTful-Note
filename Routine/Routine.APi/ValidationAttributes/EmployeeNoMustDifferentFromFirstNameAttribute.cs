@@ -13,7 +13,7 @@ namespace Routine.APi.ValidationAttributes
             var employeeAddDto = (EmployeeAddDto)validationContext.ObjectInstance;
             if (employeeAddDto.EmployeeNo == employeeAddDto.FirstName)
             {
-                return new ValidationResult("员工编号不可以等于名", new[] { nameof(EmployeeAddDto) });
+                return new ValidationResult(ErrorMessage, new[] { nameof(EmployeeAddDto) });
             }
             return ValidationResult.Success;
         }

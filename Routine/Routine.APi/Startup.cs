@@ -40,6 +40,12 @@ namespace Routine.APi
             * Content-Type Header 指明服务器输入格式，对应 ASP.NET Core 里的 Input Formatters
             */
 
+            /*
+             * .Net Core 默认使用 Problem details for HTTP APIs RFC (7807) 标准
+             * - 为所需错误信息的应用，定义了通用的错误格式
+             * - 可以识别出问题属于哪个 API
+             */
+
             //以下是一种较旧的写法，在本项目中不使用
             //services.AddControllers(options =>
             //{
@@ -61,14 +67,34 @@ namespace Routine.APi
                 //启用406状态码
                 options.ReturnHttpNotAcceptable = true;
 
-            }).AddXmlDataContractSerializerFormatters(); //添加对 XML 输入与输出格式的支持
-
+            })
+                .AddXmlDataContractSerializerFormatters() //添加对 XML 输入与输出格式的支持
+                .ConfigureApiBehaviorOptions(options =>   //自定义错误报告
+                {
+                    //IsValid = false 时会执行
+                    options.InvalidModelStateResponseFactory = context =>
+                    {
+                        var problemDetails = new ValidationProblemDetails(context.ModelState)
+                        {
+                            Type = "http://www.baidu.com",
+                            Title = "出现错误",
+                            Status = StatusCodes.Status422UnprocessableEntity,
+                            Detail = "请看详细信息",
+                            Instance = context.HttpContext.Request.Path
+                        };
+                        problemDetails.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);
+                        return new UnprocessableEntityObjectResult(problemDetails)
+                        {
+                            ContentTypes = { "application/problem+json" }
+                        };
+                    };
+                });
             //使用 AutoMapper，扫描当前应用域的所有 Assemblies 寻找 AutoMapper 的配置文件
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             //AddScoped 针对每一个 HTTP 请求都会建立一个新的实例
             services.AddScoped<ICompanyRepository, CompanyRepository>();
-           
+
             services.AddDbContext<RoutineDbContext>(options =>
             {
                 options.UseSqlServer("Data Source=localhost;DataBase=routine;Integrated Security=SSPI");

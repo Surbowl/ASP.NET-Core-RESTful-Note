@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Routine.APi.Models
 {
-    [EmployeeNoMustDifferentFromFirstNameAttribute] //作用于类
+    [EmployeeNoMustDifferentFromFirstNameAttribute(ErrorMessage ="员工号必须与名不同")] //作用于类
     public class EmployeeAddDto : IValidatableObject
     {
         [Display(Name = "员工号")]
@@ -43,3 +43,10 @@ namespace Routine.APi.Models
         }
     }
 }
+
+/*
+ * 推荐使用第三方库 FluentValidation
+ * - 容易创建复杂的验证规则
+ * - 验证规则与 Model 分离
+ * - 容易进行单元测试
+ */
