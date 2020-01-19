@@ -1,15 +1,17 @@
 ﻿using Routine.APi.Entities;
+using Routine.APi.ValidationAttributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Routine.APi.Models
 {
+    [EmployeeNoMustDifferentFromFirstNameAttribute] //作用于类
     public class EmployeeAddDto : IValidatableObject
     {
         [Display(Name = "员工号")]
         [Required(ErrorMessage = "{0}是必填项")]
-        [StringLength(10, MinimumLength = 10, ErrorMessage = "{0}的长度是{1}")]
+        [StringLength(4, MinimumLength = 4, ErrorMessage = "{0}的长度是{1}")]
         public string EmployeeNo { get; set; }
 
         [Display(Name = "名")]
