@@ -121,6 +121,12 @@ namespace Routine.APi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCompany([FromBody]CompanyAddDto company)  //Task<IActionResult> = Task<ActionResult<CompanyDto>
         {
+            //使用 [ApiController] 后，会自动返回400错误，无需再使用以下代码：
+            //if (!ModelState.IsValid)
+            //{
+            //    return UnprocessableEntity(ModelState);
+            //}
+
             //老版本需要使用以下代码：
             //新版使用 ApiController 属性以后，无需再手动检查
             //if (company == null)
