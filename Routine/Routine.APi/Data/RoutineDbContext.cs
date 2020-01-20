@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Routine.APi.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Routine.APi.Data
 {

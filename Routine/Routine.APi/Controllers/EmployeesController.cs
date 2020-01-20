@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Routine.APi.Entities;
 using Routine.APi.Models;
 using Routine.APi.Services;
@@ -168,18 +171,54 @@ namespace Routine.APi.Controllers
             var employeeEntity = await _companyRepository.GetEmployeeAsync(companyId, employeeId);
             if (employeeEntity == null)
             {
-                return NotFound();
+                //不允许客户端生成 Guid
+                //return NotFound();
+
+                //允许客户端生成 Guid
+                var employeeDto = new EmployeeUpdateDto();
+                //传入 ModelState 进行验证
+                patchDocument.ApplyTo(employeeDto, ModelState);
+                if (!TryValidateModel(employeeDto))
+                {
+                    return ValidationProblem(ModelState);
+                }
+
+                var employeeToAdd = _mapper.Map<Employee>(employeeDto);
+                employeeToAdd.Id = employeeId;
+                _companyRepository.AddEmployee(companyId, employeeToAdd);
+                await _companyRepository.SaveAsync();
+                var dtoToReturn = _mapper.Map<Employee>(employeeToAdd);
+
+                return CreatedAtAction(nameof(GetEmployeeForCompany),
+                                    new { companyId = companyId, employeeId = employeeId },
+                                    dtoToReturn);
             }
 
             var dtoToPatch = _mapper.Map<EmployeeUpdateDto>(employeeEntity);
-
-            //此处需要处理验证错误，待完成
-
+            //将 Patch 应用到 dtoToPatch（EmployeeUpdateDto）
             patchDocument.ApplyTo(dtoToPatch);
+            //验证模型
+            if (!TryValidateModel(dtoToPatch))
+            {
+                return ValidationProblem(ModelState); //返回状态码与错误信息
+            }
             _mapper.Map(dtoToPatch, employeeEntity);
             _companyRepository.UpdateEmployee(employeeEntity);
             await _companyRepository.SaveAsync();
             return NoContent(); //返回状态码204
+        }
+
+        /// <summary>
+        /// 重写 ValidationProblem
+        /// 使 PartiallyUpdateEmployeeForCompany 中的 ValidationProblem() 返回状态码422而不是400
+        /// </summary>
+        /// <param name="modelStateDictionary"></param>
+        /// <returns></returns>
+        public override ActionResult ValidationProblem(ModelStateDictionary modelStateDictionary)
+        {
+            var options = HttpContext.RequestServices
+                                        .GetRequiredService<IOptions<ApiBehaviorOptions>>();
+            return (ActionResult)options.Value.InvalidModelStateResponseFactory(ControllerContext);
         }
 
         [HttpOptions]

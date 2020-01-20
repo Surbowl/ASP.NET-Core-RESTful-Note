@@ -1,21 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using Routine.APi.Data;
 using Routine.APi.Services;
+using System;
 
 namespace Routine.APi
 {
@@ -69,6 +64,7 @@ namespace Routine.APi
                 options.ReturnHttpNotAcceptable = true;
 
             })
+                //默认格式取决于序列化工具的添加顺序
                 .AddNewtonsoftJson(options =>  //第三方 JSON 序列化和反序列化工具（会替换掉原本默认的 JSON 序列化工具）
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
