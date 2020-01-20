@@ -109,7 +109,10 @@ namespace Routine.APi.Services
                 queryExpression = queryExpression.Where(x => x.Name.Contains(parameters.SearchTerm)
                                                             || x.Introduction.Contains(parameters.SearchTerm));
             }
-            return await queryExpression.ToListAsync();
+
+            return await queryExpression.Skip((parameters.PageNumber - 1) * parameters.PageSize)
+                                        .Take(parameters.PageSize)
+                                        .ToListAsync();
         }
 
         public async Task<IEnumerable<Company>> GetCompaniesAsync(IEnumerable<Guid> companyIds)

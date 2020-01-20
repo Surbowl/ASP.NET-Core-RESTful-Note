@@ -48,6 +48,11 @@ namespace Routine.APi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCompanyCollection(IEnumerable<CompanyAddDto> companyCollection) //Task<IActionResult> = Task<ActionResult<IEnumerable<CompanyDto>>>
         {
+
+            //
+            //此方法没有对 Employees 进行模型验证
+            //
+
             var companyEntities = _mapper.Map<IEnumerable<Company>>(companyCollection);
             foreach (var company in companyEntities)
             {
