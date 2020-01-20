@@ -154,10 +154,26 @@ namespace Routine.APi.Controllers
             return CreatedAtRoute(nameof(GetCompany), new { companyId = returnDto.Id }, returnDto);
         }
 
+        [HttpDelete("{companyId}")]
+        public async Task<IActionResult> DeleteEmployeeForCompany(Guid companyId)
+        {
+            var companyEntity = await _companyRepository.GetCompanyAsync(companyId);
+            if (companyEntity == null)
+            {
+                return NotFound();
+            }
+            //把 Employees 加载到内存中，使删除时可以追踪 ？？？
+            await _companyRepository.GetEmployeesAsync(companyId, null, null);
+            
+            _companyRepository.DeleteCompany(companyEntity);
+            await _companyRepository.SaveAsync();
+            return NoContent();
+        }
+
         [HttpOptions]
         public IActionResult GetCompaniesOptions()
         {
-            Response.Headers.Add("Allow", "GET,POST,OPTIONS");
+            Response.Headers.Add("Allow", "DELETE,GET,PATCH,PUT,OPTIONS");
             return Ok();
         }
     }

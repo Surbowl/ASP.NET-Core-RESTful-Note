@@ -208,6 +208,32 @@ namespace Routine.APi.Controllers
             return NoContent(); //返回状态码204
         }
 
+        [HttpDelete("{employeeId}")]
+        public async Task<IActionResult> DeleteEmployeeForCompany(Guid companyId,Guid employeeId)
+        {
+            if(!await _companyRepository.CompanyExistsAsync(companyId))
+            {
+                return NotFound();
+            }
+
+            var employeeEntity = await _companyRepository.GetEmployeeAsync(companyId, employeeId);
+            if (employeeEntity == null)
+            {
+                return NotFound();
+            }
+
+            _companyRepository.DeleteEmployee(employeeEntity);
+            await _companyRepository.SaveAsync();
+            return NoContent();
+        }
+
+        [HttpOptions]
+        public IActionResult GetCompaniesOptions()
+        {
+            Response.Headers.Add("Allowss", "DELETE,GET,PATCH,PUT,OPTIONS");
+            return Ok();
+        }
+
         /// <summary>
         /// 重写 ValidationProblem
         /// 使 PartiallyUpdateEmployeeForCompany 中的 ValidationProblem() 返回状态码422而不是400
@@ -219,13 +245,6 @@ namespace Routine.APi.Controllers
             var options = HttpContext.RequestServices
                                         .GetRequiredService<IOptions<ApiBehaviorOptions>>();
             return (ActionResult)options.Value.InvalidModelStateResponseFactory(ControllerContext);
-        }
-
-        [HttpOptions]
-        public IActionResult GetCompaniesOptions()
-        {
-            Response.Headers.Add("Allowss", "GET,POST,PUT,OPTIONS");
-            return Ok();
         }
     }
 }

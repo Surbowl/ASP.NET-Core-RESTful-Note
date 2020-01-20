@@ -72,7 +72,12 @@ namespace Routine.APi.Services
 
         public void DeleteEmployee(Employee employee)
         {
-            throw new NotImplementedException();
+            if (employee == null)
+            {
+                throw new ArgumentNullException(nameof(employee));
+            }
+
+            _context.Employees.Remove(employee);
         }
 
         public async Task<Company> GetCompanyAsync(Guid companyId)
