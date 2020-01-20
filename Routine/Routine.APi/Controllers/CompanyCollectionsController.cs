@@ -25,7 +25,7 @@ namespace Routine.APi.Controllers
                                     throw new ArgumentNullException(nameof(companyRepository));
         }
 
-        [HttpGet("({ids})",Name =nameof(GetCompanyCollection))]
+        [HttpGet("({ids})", Name = nameof(GetCompanyCollection))]
         public async Task<IActionResult> GetCompanyCollection([FromRoute]
                                                               [ModelBinder(BinderType = typeof(ArrayModelBinder))]
                                                               IEnumerable<Guid> ids)
@@ -36,11 +36,10 @@ namespace Routine.APi.Controllers
             }
             var entities = await _companyRepository.GetCompaniesAsync(ids);
 
-            //这个写法有 BUG，ids.Count() 返回的居然是 Query 字符串长度
-            //if (ids.Count() != entities.Count())
-            //{
-            //    return NotFound();
-            //}
+            if (ids.Count() != entities.Count())
+            {
+                return NotFound();
+            }
 
             var dtosToReturn = _mapper.Map<IEnumerable<CompanyDto>>(entities);
             return Ok(dtosToReturn);
