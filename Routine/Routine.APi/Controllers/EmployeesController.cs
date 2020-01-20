@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Routine.APi.Entities;
 using Routine.APi.Models;
 using Routine.APi.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Routine.APi.Controllers
@@ -83,12 +83,12 @@ namespace Routine.APi.Controllers
         /// </summary>
         /// <param name="companyId"></param>
         /// <param name="employeeId"></param>
-        /// <param name="employee"></param>
+        /// <param name="employeeUpdateDto"></param>
         /// <returns></returns>
         [HttpPut("{employeeId}")]
         public async Task<IActionResult> UpdateEmployeeForCompany(Guid companyId,
                                                                   Guid employeeId,
-                                                                  EmployeeUpdateDto employee)
+                                                                  EmployeeUpdateDto employeeUpdateDto)
         {
             if(!await _companyRepository.CompanyExistsAsync(companyId))
             {
@@ -102,7 +102,7 @@ namespace Routine.APi.Controllers
                 //return NotFound();
 
                 //允许客户端生成 Guid
-                var employeeToAddEntity = _mapper.Map<Employee>(employee);
+                var employeeToAddEntity = _mapper.Map<Employee>(employeeUpdateDto);
                 employeeToAddEntity.Id = employeeId;
                 _companyRepository.AddEmployee(companyId, employeeToAddEntity);
                 await _companyRepository.SaveAsync();
@@ -113,10 +113,80 @@ namespace Routine.APi.Controllers
             }
 
             //把 updateDto 映射到 entity
-            _mapper.Map(employee, employeeEntity);
+            _mapper.Map(employeeUpdateDto, employeeEntity);
             _companyRepository.UpdateEmployee(employeeEntity);
             await _companyRepository.SaveAsync();
             return NoContent(); //返回状态码204
+        }
+
+        /*
+         * HTTP PATCH 举例
+         * 原资源：
+         *      {
+         *        "baz":"qux",
+         *        "foo":"bar"
+         *      }
+         * 
+         * 请求的 Body:
+         *      [
+         *        {"op":"replace","path":"/baz","value":"boo"},
+         *        {"op":"add","path":"/hello","value":["world"]},
+         *        {"op":"remove","path":"/foo"}
+         *      ]
+         *      
+         * 修改后的资源：
+         *      {
+         *        "baz":"boo",
+         *        "hello":["world"]
+         *      }
+         *      
+         * JSON PATCH Operations:
+         * Add:
+         *   {"op":"add","path":"/biscuits/1","value":{"name","Ginger Nut"}}
+         * Replace:
+         *   {"op":"replace","path":"/biscuits/0/name","value":"Chocolate Digestive"}
+         * Remove:
+         *   {"op":"remove","path":"/biscuits"}
+         *   {"op":"remove","path":"/biscuits/0"}
+         * Copy:
+         *   {"op":"copy","from":"/biscuits/0","path":"/best_biscuit"}
+         * Move:
+         *   {"op":"move","from":"/biscuits","path":"/cookies"}
+         * Test:
+         *   {"op":"test","path":"/best_biscuit","value":"Choco Leibniz}
+         */
+        [HttpPatch("{employeeId}")]
+        public async Task<IActionResult> PartiallyUpdateEmployeeForCompany(Guid companyId,
+                                                                           Guid employeeId,
+                                                                           JsonPatchDocument<EmployeeUpdateDto> patchDocument)
+        {
+            if (!await _companyRepository.CompanyExistsAsync(companyId))
+            {
+                return NotFound();
+            }
+
+            var employeeEntity = await _companyRepository.GetEmployeeAsync(companyId, employeeId);
+            if (employeeEntity == null)
+            {
+                return NotFound();
+            }
+
+            var dtoToPatch = _mapper.Map<EmployeeUpdateDto>(employeeEntity);
+
+            //此处需要处理验证错误，待完成
+
+            patchDocument.ApplyTo(dtoToPatch);
+            _mapper.Map(dtoToPatch, employeeEntity);
+            _companyRepository.UpdateEmployee(employeeEntity);
+            await _companyRepository.SaveAsync();
+            return NoContent(); //返回状态码204
+        }
+
+        [HttpOptions]
+        public IActionResult GetCompaniesOptions()
+        {
+            Response.Headers.Add("Allowss", "GET,POST,PUT,OPTIONS");
+            return Ok();
         }
     }
 }

@@ -18,6 +18,8 @@ using System.Threading.Tasks;
  *            服务器端负责 URI 的生成           |
  *                                            |
  * PATCH    - 局部修改/更新                    |    N     N
+ *            请求的 MediaType 是              |
+ *            application/json-patch+json     |
  *                                            |
  * PUT      - 如果存在就替换，不存在则创建       |     N     Y
  *            如果 URI 存在，就更新资源         | 

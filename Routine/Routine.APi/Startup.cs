@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Serialization;
 using Routine.APi.Data;
 using Routine.APi.Services;
 
@@ -68,7 +69,11 @@ namespace Routine.APi
                 options.ReturnHttpNotAcceptable = true;
 
             })
-                .AddXmlDataContractSerializerFormatters() //添加对 XML 输入与输出格式的支持
+                .AddNewtonsoftJson(options =>  //第三方 JSON 序列化和反序列化工具（会替换掉原本默认的 JSON 序列化工具）
+                {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                })
+                .AddXmlDataContractSerializerFormatters() //XML 序列化和反序列化工具
                 .ConfigureApiBehaviorOptions(options =>   //自定义错误报告
                 {
                     //IsValid = false 时会执行
