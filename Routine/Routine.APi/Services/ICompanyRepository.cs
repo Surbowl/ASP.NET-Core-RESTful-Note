@@ -1,5 +1,6 @@
 ﻿using Routine.APi.DtoParameters;
 using Routine.APi.Entities;
+using Routine.APi.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace Routine.APi.Services
 {
     public interface ICompanyRepository
     {
-        Task<IEnumerable<Company>> GetCompaniesAsync(CompanyDtoParameters parameters);
+        Task<PagedList<Company>> GetCompaniesAsync(CompanyDtoParameters parameters);
         Task<Company> GetCompanyAsync(Guid companyId);
         Task<IEnumerable<Company>> GetCompaniesAsync(IEnumerable<Guid> companyIds);
         void AddCompany(Company company);

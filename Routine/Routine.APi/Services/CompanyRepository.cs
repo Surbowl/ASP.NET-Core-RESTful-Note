@@ -2,6 +2,7 @@
 using Routine.APi.Data;
 using Routine.APi.DtoParameters;
 using Routine.APi.Entities;
+using Routine.APi.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,7 +91,7 @@ namespace Routine.APi.Services
             return await _context.Companies.FirstOrDefaultAsync(x => x.Id == companyId);
         }
 
-        public async Task<IEnumerable<Company>> GetCompaniesAsync(CompanyDtoParameters parameters)
+        public async Task<PagedList<Company>> GetCompaniesAsync(CompanyDtoParameters parameters)
         {
             if (parameters == null)
             {
@@ -98,10 +99,10 @@ namespace Routine.APi.Services
             }
 
             var queryExpression = _context.Companies as IQueryable<Company>;
-            if (!string.IsNullOrWhiteSpace(parameters.Name))
+            if (!string.IsNullOrWhiteSpace(parameters.companyName))
             {
-                parameters.Name = parameters.Name.Trim();
-                queryExpression = queryExpression.Where(x => x.Name == parameters.Name);
+                parameters.companyName = parameters.companyName.Trim();
+                queryExpression = queryExpression.Where(x => x.Name == parameters.companyName);
             }
             if (!string.IsNullOrWhiteSpace(parameters.SearchTerm))
             {
@@ -110,9 +111,11 @@ namespace Routine.APi.Services
                                                             || x.Introduction.Contains(parameters.SearchTerm));
             }
 
-            return await queryExpression.Skip((parameters.PageNumber - 1) * parameters.PageSize)
-                                        .Take(parameters.PageSize)
-                                        .ToListAsync();
+            //return await queryExpression.Skip((parameters.PageNumber - 1) * parameters.PageSize)
+            //                            .Take(parameters.PageSize)
+            //                            .ToListAsync();
+
+            return await PagedList<Company>.CreateAsync(queryExpression, parameters.PageNumber, parameters.PageSize);
         }
 
         public async Task<IEnumerable<Company>> GetCompaniesAsync(IEnumerable<Guid> companyIds)

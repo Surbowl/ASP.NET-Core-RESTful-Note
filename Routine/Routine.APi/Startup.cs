@@ -42,7 +42,7 @@ namespace Routine.APi
              * - 可以识别出问题属于哪个 API
              */
 
-            //以下是一种较旧的写法，在本项目中不使用
+            //以下是一种较旧的写法，在本项目中不使用（视频P8）
             //services.AddControllers(options =>
             //{
             //    //启用406状态码
@@ -57,7 +57,7 @@ namespace Routine.APi
             //    //options.OutputFormatters.Insert(0, new XmlDataContractSerializerOutputFormatter());
             //});
             //
-            //以下是较新的写法，使用诸如 AddXmlDataContractSerializerFormatters() 等，使用更方便。
+            //以下是较新的写法，AddXmlDataContractSerializerFormatters() 等方法使用更方便。
             services.AddControllers(options =>
             {
                 //启用406状态码
@@ -65,12 +65,12 @@ namespace Routine.APi
 
             })
                 //默认格式取决于序列化工具的添加顺序
-                .AddNewtonsoftJson(options =>  //第三方 JSON 序列化和反序列化工具（会替换掉原本默认的 JSON 序列化工具）
+                .AddNewtonsoftJson(options =>  //第三方 JSON 序列化和反序列化工具（会替换掉原本默认的 JSON 序列化工具）（视频P32）
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 })
-                .AddXmlDataContractSerializerFormatters() //XML 序列化和反序列化工具
-                .ConfigureApiBehaviorOptions(options =>   //自定义错误报告
+                .AddXmlDataContractSerializerFormatters() //XML 序列化和反序列化工具（视频P8）
+                .ConfigureApiBehaviorOptions(options =>   //自定义错误报告（视频P29）
                 {
                     //IsValid = false 时会执行
                     options.InvalidModelStateResponseFactory = context =>
@@ -90,7 +90,7 @@ namespace Routine.APi
                         };
                     };
                 });
-            //使用 AutoMapper，扫描当前应用域的所有 Assemblies 寻找 AutoMapper 的配置文件
+            //使用 AutoMapper，扫描当前应用域的所有 Assemblies 寻找 AutoMapper 的配置文件（视频P12）
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             //AddScoped 针对每一个 HTTP 请求都会建立一个新的实例

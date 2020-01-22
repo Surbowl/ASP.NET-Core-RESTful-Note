@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Routine.APi.Helpers
 {
     /// <summary>
-    /// 自定义 Model 绑定器
+    /// 自定义 Model 绑定器（视频P24)
     /// </summary>
     public class ArrayModelBinder : IModelBinder
     {

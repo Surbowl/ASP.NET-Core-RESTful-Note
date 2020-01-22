@@ -3,7 +3,7 @@
     public class CompanyDtoParameters
     {
         private const int MaxPageSize = 20;
-        public string Name { get; set; }
+        public string companyName { get; set; }
         public string SearchTerm { get; set; }
 
         public int PageNumber { get; set; } = 1; //默认值为1

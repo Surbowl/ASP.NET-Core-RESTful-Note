@@ -2,10 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Routine.APi.DtoParameters;
 using Routine.APi.Entities;
+using Routine.APi.Helpers;
 using Routine.APi.Models;
 using Routine.APi.Services;
 using System;
 using System.Collections.Generic;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 /*
@@ -83,25 +86,48 @@ namespace Routine.APi.Controllers
      */
     [ApiController]
     [Route("api/companies")] //还可用 [Route("api/[controller]")]
-    public class CompaniesController:ControllerBase
+    public class CompaniesController : ControllerBase
     {
         private readonly ICompanyRepository _companyRepository;
         private readonly IMapper _mapper;
 
-        public CompaniesController(ICompanyRepository companyRepository,IMapper mapper)
+        public CompaniesController(ICompanyRepository companyRepository, IMapper mapper)
         {
             _companyRepository = companyRepository ??
                                         throw new ArgumentNullException(nameof(companyRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        [HttpGet]
+        [HttpGet(Name = nameof(GetCompanies))]
         [HttpHead] //添加对 Http Head 的支持，使用 Head 请求时不会返回 Body
         public async Task<IActionResult> GetCompanies([FromQuery]CompanyDtoParameters parameters) //Task<IActionResult> = Task<ActionResult<List<CompanyDto>>>
         {
             var companies = await _companyRepository.GetCompaniesAsync(parameters);
 
-            //不使用 AutoMapper 
+            //向 Header 中添加翻页信息（视频P35）
+            //上一页的 URI
+            var previousPageLink = companies.HasPrevious
+                                ? CreateCompaniesResourceUri(parameters, ResourceUnType.PreviousPage) 
+                                : null;
+            //下一页的 URI
+            var nextPageLink = companies.HasNext
+                                ? CreateCompaniesResourceUri(parameters, ResourceUnType.NextPage)
+                                : null;
+            var paginationMetdata = new
+            {
+                totalCount = companies.TotalCount,
+                pageSize = companies.PageSize,
+                currentPage = companies.CurrentPage,
+                totalPages = companies.TotalPages,
+                previousPageLink,
+                nextPageLink
+            };
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetdata,
+                                                                          new JsonSerializerOptions //URI 中的‘&’、‘？’符号不应该被转义，因此改用不安全的 Encoder
+                                                                          {
+                                                                              Encoder=JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                                                                          }));
+            //不使用 AutoMapper
             //var companyDtos = new List<CompanyDto>();
             //foreach(var company in companies)
             //{
@@ -112,13 +138,13 @@ namespace Routine.APi.Controllers
             //    });
             //}
 
-            //使用 AutoMapper
+            //使用 AutoMapper（视频P12）
             var companyDtos = _mapper.Map<IEnumerable<CompanyDto>>(companies);
 
             return Ok(companyDtos);  //OK() 返回状态码200
         }
 
-        [HttpGet("{companyId}",Name =nameof(GetCompany))]  //[Route("{companyId}")]
+        [HttpGet("{companyId}", Name = nameof(GetCompany))]  //[Route("{companyId}")]
         public async Task<IActionResult> GetCompany(Guid companyId)
         {
             var company = await _companyRepository.GetCompanyAsync(companyId);
@@ -132,14 +158,13 @@ namespace Routine.APi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCompany([FromBody]CompanyAddDto company)  //Task<IActionResult> = Task<ActionResult<CompanyDto>
         {
-            //使用 [ApiController] 后，会自动返回400错误，无需再使用以下代码：
+            //使用 [ApiController] 属性后，会自动返回400错误，无需再使用以下代码：
             //if (!ModelState.IsValid)
             //{
             //    return UnprocessableEntity(ModelState);
             //}
 
-            //老版本需要使用以下代码：
-            //新版使用 ApiController 属性以后，无需再手动检查
+            //新版使用 [ApiController] 属性后，无需再手动检查
             //if (company == null)
             //{
             //    return BadRequest(); //返回状态码400
@@ -162,9 +187,9 @@ namespace Routine.APi.Controllers
             {
                 return NotFound();
             }
-            //把 Employees 加载到内存中，使删除时可以追踪 ？？？
+            //把 Employees 加载到内存中，使删除时可以追踪 ？？？（视频P33）
             await _companyRepository.GetEmployeesAsync(companyId, null, null);
-            
+
             _companyRepository.DeleteCompany(companyEntity);
             await _companyRepository.SaveAsync();
             return NoContent();
@@ -175,6 +200,52 @@ namespace Routine.APi.Controllers
         {
             Response.Headers.Add("Allow", "DELETE,GET,PATCH,PUT,OPTIONS");
             return Ok();
+        }
+
+        /// <summary>
+        /// 生成上一页或下一页的 URI（视频P35）
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private string CreateCompaniesResourceUri(CompanyDtoParameters parameters,
+                                                  ResourceUnType type)
+        {
+            switch (type)
+            {
+                case ResourceUnType.PreviousPage: //上一页
+                    return Url.Link(
+                        nameof(GetCompanies),
+                        new
+                        {
+                            pageNumber = parameters.PageNumber - 1,
+                            pageSize = parameters.PageSize,
+                            companyName = parameters.companyName,
+                            searchTerm = parameters.SearchTerm
+                        });
+
+                case ResourceUnType.NextPage: //下一页
+                    return Url.Link(
+                        nameof(GetCompanies),
+                        new
+                        {
+                            pageNumber = parameters.PageNumber + 1,
+                            pageSize = parameters.PageSize,
+                            companyName = parameters.companyName,
+                            searchTerm = parameters.SearchTerm
+                        });
+
+                default: //当前页
+                    return Url.Link(
+                        nameof(GetCompanies),
+                        new
+                        {
+                            pageNumber = parameters.PageNumber,
+                            pageSize = parameters.PageSize,
+                            companyName = parameters.companyName,
+                            searchTerm = parameters.SearchTerm
+                        });
+            }
         }
     }
 }
