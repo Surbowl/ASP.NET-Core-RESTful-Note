@@ -32,7 +32,7 @@ namespace Routine.APi.Data
                 //.OnDelete(DeleteBehavior.Restrict);
                 //允许级联删除：删除 Company 时自动删除拥有的 Employee
                 .OnDelete(DeleteBehavior.Cascade);
-                //种子数据
+            //种子数据
             modelBuilder.Entity<Company>().HasData(
                 new Company
                 {
