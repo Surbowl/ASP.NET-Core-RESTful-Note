@@ -9,6 +9,8 @@
     <Compile Remove="Migrations\20200104134337_InitialMigration.Designer.cs" />
     <Compile Remove="Migrations\20200111083647_AddEmployeeData.cs" />
     <Compile Remove="Migrations\20200111083647_AddEmployeeData.Designer.cs" />
+    <Compile Remove="Migrations\20200206105928_AfterP38.cs" />
+    <Compile Remove="Migrations\20200206105928_AfterP38.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +27,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.20" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 

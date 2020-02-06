@@ -54,7 +54,14 @@ namespace Routine.APi.Migrations
                     { new Guid("bbdee09c-089b-4d30-bece-44df5923716c"), "USA", "Internet", "Great Company", "Microsoft", "Software" },
                     { new Guid("6fb600c1-9011-4fd7-9234-881379716440"), "USA", "Internet", "Don't be evil", "Google", "Software" },
                     { new Guid("5efc910b-2f45-43df-afee-620d40542853"), "CN", "Internet", "Fubao Company", "Alipapa", "Software" },
-                    { new Guid("8cc04f96-2c42-4f76-832e-1903835b0190"), "CN", "Communication", "Building a Smart World of Everything", "Huawei", "Hardware" }
+                    { new Guid("8cc04f96-2c42-4f76-832e-1903835b0190"), "CN", "Communication", "Building a Smart World of Everything", "Huawei", "Hardware" },
+                    { new Guid("d1f1f410-f563-4355-aa91-4774d693363f"), "CN", "Communication", "Born for a fever", "Xiaomi", "Hardware" },
+                    { new Guid("19b8d0f9-4fdf-41ab-b172-f2d5d725b6d9"), "CN", "Wine", "Great Wine", "Wuliangye", "Wine" },
+                    { new Guid("6c28b511-34f6-43b2-89f6-fa3dab77bcf9"), "JP", "Textile", "Good clothes", "UNIQLO", "Costume" },
+                    { new Guid("4ab2b4af-45ce-41b3-8aed-5447c3140330"), "ESP", "Textile", "Stylish clothes", "ZARA", "Costume" },
+                    { new Guid("cd11c117-551c-409f-80e9-c15d89fd7ca8"), "GER", "Auto", "The best car", "Mercedes-Benz", "Car" },
+                    { new Guid("a39f7877-3849-48a1-b6af-e35b90c73e6a"), "GER", "Auto", "Good car", "BMW", "Car" },
+                    { new Guid("eb8fc677-2600-4fdb-a8ef-51c006e7fc20"), "USA", "Internet", "An American web services provider headquartered in Sunnyvale", "Yahoo!", "Software" }
                 });
 
             migrationBuilder.InsertData(

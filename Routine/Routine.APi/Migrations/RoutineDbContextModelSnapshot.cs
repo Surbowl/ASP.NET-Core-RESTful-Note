@@ -83,6 +83,69 @@ namespace Routine.APi.Migrations
                             Introduction = "Building a Smart World of Everything",
                             Name = "Huawei",
                             Product = "Hardware"
+                        },
+                        new
+                        {
+                            Id = new Guid("d1f1f410-f563-4355-aa91-4774d693363f"),
+                            Country = "CN",
+                            Industry = "Communication",
+                            Introduction = "Born for a fever",
+                            Name = "Xiaomi",
+                            Product = "Hardware"
+                        },
+                        new
+                        {
+                            Id = new Guid("19b8d0f9-4fdf-41ab-b172-f2d5d725b6d9"),
+                            Country = "CN",
+                            Industry = "Wine",
+                            Introduction = "Great Wine",
+                            Name = "Wuliangye",
+                            Product = "Wine"
+                        },
+                        new
+                        {
+                            Id = new Guid("6c28b511-34f6-43b2-89f6-fa3dab77bcf9"),
+                            Country = "JP",
+                            Industry = "Textile",
+                            Introduction = "Good clothes",
+                            Name = "UNIQLO",
+                            Product = "Costume"
+                        },
+                        new
+                        {
+                            Id = new Guid("4ab2b4af-45ce-41b3-8aed-5447c3140330"),
+                            Country = "ESP",
+                            Industry = "Textile",
+                            Introduction = "Stylish clothes",
+                            Name = "ZARA",
+                            Product = "Costume"
+                        },
+                        new
+                        {
+                            Id = new Guid("cd11c117-551c-409f-80e9-c15d89fd7ca8"),
+                            Country = "GER",
+                            Industry = "Auto",
+                            Introduction = "The best car",
+                            Name = "Mercedes-Benz",
+                            Product = "Car"
+                        },
+                        new
+                        {
+                            Id = new Guid("a39f7877-3849-48a1-b6af-e35b90c73e6a"),
+                            Country = "GER",
+                            Industry = "Auto",
+                            Introduction = "Good car",
+                            Name = "BMW",
+                            Product = "Car"
+                        },
+                        new
+                        {
+                            Id = new Guid("eb8fc677-2600-4fdb-a8ef-51c006e7fc20"),
+                            Country = "USA",
+                            Industry = "Internet",
+                            Introduction = "An American web services provider headquartered in Sunnyvale",
+                            Name = "Yahoo!",
+                            Product = "Software"
                         });
                 });
 

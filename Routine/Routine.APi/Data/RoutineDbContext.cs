@@ -69,6 +69,69 @@ namespace Routine.APi.Data
                     Industry = "Communication",
                     Product = "Hardware",
                     Introduction = "Building a Smart World of Everything"
+                },
+                new Company
+                {
+                    Id = Guid.Parse("d1f1f410-f563-4355-aa91-4774d693363f"),
+                    Name = "Xiaomi",
+                    Country = "CN",
+                    Industry = "Communication",
+                    Product = "Hardware",
+                    Introduction = "Born for a fever"
+                },
+                new Company
+                {
+                    Id = Guid.Parse("19b8d0f9-4fdf-41ab-b172-f2d5d725b6d9"),
+                    Name = "Wuliangye",
+                    Country = "CN",
+                    Industry = "Wine",
+                    Product = "Wine",
+                    Introduction = "Great Wine"
+                },
+                new Company
+                {
+                    Id = Guid.Parse("6c28b511-34f6-43b2-89f6-fa3dab77bcf9"),
+                    Name = "UNIQLO",
+                    Country = "JP",
+                    Industry = "Textile",
+                    Product = "Costume",
+                    Introduction = "Good clothes"
+                },
+                new Company
+                {
+                    Id = Guid.Parse("4ab2b4af-45ce-41b3-8aed-5447c3140330"),
+                    Name = "ZARA",
+                    Country = "ESP",
+                    Industry = "Textile",
+                    Product = "Costume",
+                    Introduction = "Stylish clothes"
+                },
+                new Company
+                {
+                    Id = Guid.Parse("cd11c117-551c-409f-80e9-c15d89fd7ca8"),
+                    Name = "Mercedes-Benz",
+                    Country = "GER",
+                    Industry = "Auto",
+                    Product = "Car",
+                    Introduction = "The best car"
+                },
+                new Company
+                {
+                    Id = Guid.Parse("a39f7877-3849-48a1-b6af-e35b90c73e6a"),
+                    Name = "BMW",
+                    Country = "GER",
+                    Industry = "Auto",
+                    Product = "Car",
+                    Introduction = "Good car"
+                },
+                new Company
+                {
+                    Id = Guid.Parse("eb8fc677-2600-4fdb-a8ef-51c006e7fc20"),
+                    Name = "Yahoo!",
+                    Country = "USA",
+                    Industry = "Internet",
+                    Product = "Software",
+                    Introduction = "An American web services provider headquartered in Sunnyvale"
                 }
             );
             modelBuilder.Entity<Employee>().HasData(
