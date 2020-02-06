@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200104134337_InitialMigration.cs" />
+    <Compile Remove="Migrations\20200104134337_InitialMigration.Designer.cs" />
+    <Compile Remove="Migrations\20200111083647_AddEmployeeData.cs" />
+    <Compile Remove="Migrations\20200111083647_AddEmployeeData.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.1" />

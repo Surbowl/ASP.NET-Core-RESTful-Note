@@ -63,7 +63,6 @@ namespace Routine.APi.Helpers
                     }
 
                     //需要安装 System.Linq.Dynamic.Core 包，才能使用以下代码
-                    //System.Linq.Dynamic.Core 包中的 OrderBy 可以直接传入字符串构造 T-SQL 语句
                     //System.Linq.Dynamic.Core 包中的 OrderBy 可以直接叠加，不用 .OrderBy().ThenBy() 这种写法
                     //越后面被 OrderBy 的属性，权重越高，所以在书面的代码中使用了两次 Reverse() 反转
                     source = source.OrderBy(destinationProperty + (orderDescending ? " descending" : " ascending"));

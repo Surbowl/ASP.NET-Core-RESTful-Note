@@ -12,6 +12,19 @@ namespace Routine.APi.Models
         [MaxLength(100, ErrorMessage = "{0}的最大长度不可以超过{1}")]
         public string Name { get; set; }
 
+        [Display(Name = "国家")]
+        [Required(ErrorMessage = "{0}这个字段是必填的")]
+        [MaxLength(100, ErrorMessage = "{0}的最大长度不可以超过{1}")]
+        public string Country { get; set; }
+
+        [Display(Name = "行业")]
+        [MaxLength(100, ErrorMessage = "{0}的最大长度不可以超过{1}")]
+        public string Industry { get; set; }
+
+        [Display(Name = "产品")]
+        [MaxLength(100, ErrorMessage = "{0}的最大长度不可以超过{1}")]
+        public string Product { get; set; }
+
         [Display(Name = "简介")]
         [StringLength(500,MinimumLength =10,ErrorMessage = "{0}的长度范围从{2}到{1}")]
         //[MaxLength(500, ErrorMessage = "{0}的最大长度不可以超过{1}")]
