@@ -115,6 +115,7 @@ namespace Routine.APi.Services
             //                            .Take(parameters.PageSize)
             //                            .ToListAsync();
 
+            //返回经过翻页处理的 PagedList<T>，PagedList<T> 会执行翻页操作，并保存页码等信息
             return await PagedList<Company>.CreateAsync(queryExpression, parameters.PageNumber, parameters.PageSize);
         }
 

@@ -99,9 +99,10 @@ namespace Routine.APi.Controllers
         }
 
         [HttpGet(Name = nameof(GetCompanies))]
-        [HttpHead] //添加对 Http Head 的支持，使用 Head 请求时不会返回 Body
+        [HttpHead] //添加对 Http Head 的支持，Head 请求只会返回 Header 信息，没有 Body（视频P16）
         public async Task<IActionResult> GetCompanies([FromQuery]CompanyDtoParameters parameters) //Task<IActionResult> = Task<ActionResult<List<CompanyDto>>>
         {
+            //GetCompaniesAsync(parameters) 返回的是经过翻页处理的 PagedList<T>（视频P35）
             var companies = await _companyRepository.GetCompaniesAsync(parameters);
 
             //向 Header 中添加翻页信息（视频P35）
@@ -164,7 +165,7 @@ namespace Routine.APi.Controllers
             //    return UnprocessableEntity(ModelState);
             //}
 
-            //新版使用 [ApiController] 属性后，无需再手动检查
+            //Core 3.x 使用 [ApiController] 属性后，无需再使用以下代码：
             //if (company == null)
             //{
             //    return BadRequest(); //返回状态码400
