@@ -13,6 +13,19 @@ namespace Routine.APi.Services
         //映射关系字典
         //一个属性可以映射到多个属性
 
+        //Company 的映射关系字典
+        //StringComparer.OrdinalIgnoreCase 表明这个字典的 Key 大小写不敏感
+        private readonly Dictionary<string, PropertyMappingValue> _companyPropertyMapping
+            = new Dictionary<string, PropertyMappingValue>(StringComparer.OrdinalIgnoreCase)
+            {
+                {"Id",new PropertyMappingValue(new List<string>{"Id"}) },
+                {"Name",new PropertyMappingValue(new List<string>{"Name"}) },
+                {"Country",new PropertyMappingValue(new List<string>{"Country"}) },
+                {"Industry",new PropertyMappingValue(new List<string>{"Industry"}) },
+                {"Product",new PropertyMappingValue(new List<string>{"Product"}) },
+                {"Introduction",new PropertyMappingValue(new List<string>{"Introduction"}) } //Age 和 DateOfBirth 排序顺序应该是反转的
+            };
+
         //Employee 的映射关系字典
         //StringComparer.OrdinalIgnoreCase 表明这个字典的 Key 大小写不敏感
         private readonly Dictionary<string, PropertyMappingValue> _employeePropertyMapping
@@ -34,7 +47,8 @@ namespace Routine.APi.Services
 
         public PropertyMappingService()
         {
-            //添加 Employee 的映射关系
+            //向列表中添加映射关系
+            _propertyMappings.Add(new PropertyMapping<CompanyDto, Company>(_companyPropertyMapping));
             _propertyMappings.Add(new PropertyMapping<EmployeeDto, Employee>(_employeePropertyMapping));
         }
 
@@ -55,6 +69,34 @@ namespace Routine.APi.Services
                 return propertyMapping.First().MappingDictionary;
             }
             throw new Exception($"无法找到唯一的映射关系：{typeof(TSource)},{typeof(TDestination)}");
+        }
+
+        /// <summary>
+        /// 客户端提交的 Uri query string 中的 orderby 是否合法（视频P38）
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TDestination"></typeparam>
+        /// <param name="fields"></param>
+        /// <returns></returns>
+        public bool ValidMappingExistsFor<TSource,TDestination>(string fields)
+        {
+            var propertyMapping = GetPropertyMapping<TSource, TDestination>();
+            if (string.IsNullOrWhiteSpace(fields))
+            {
+                return true;
+            }
+            var fieldAfterSplit = fields.Split(",");
+            foreach(var field in fieldAfterSplit)
+            {
+                var trimedField = field.Trim();
+                var indexOfFirstSpace = trimedField.IndexOf(" ");
+                var propertyName = indexOfFirstSpace == -1 ? trimedField : trimedField.Remove(indexOfFirstSpace);
+                if (!propertyMapping.ContainsKey(propertyName))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

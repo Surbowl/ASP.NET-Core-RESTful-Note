@@ -20,12 +20,13 @@ namespace Routine.APi.Controllers
     {
         private readonly ICompanyRepository _companyRepository;
         private readonly IMapper _mapper;
+        private readonly IPropertyMappingService _propertyMappingService;
 
-        public EmployeesController(ICompanyRepository companyRepository, IMapper mapper)
+        public EmployeesController(ICompanyRepository companyRepository, IMapper mapper,IPropertyMappingService propertyMappingService)
         {
             _companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-
+            _propertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
         //在视频P36之前（不使用 DtoParameters，没有排序功能）
@@ -50,6 +51,12 @@ namespace Routine.APi.Controllers
         public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
                                                                 [FromQuery]EmployeeDtoParameters parameters)
         {
+            //判断Uri query string 中的 orderby 是否合法（视频P38）
+            if (!_propertyMappingService.ValidMappingExistsFor<CompanyDto, Company>(parameters.OrderBy))
+            {
+                return BadRequest();  //返回状态码400
+            }
+
             if (await _companyRepository.CompanyExistsAsync(companyId))
             {
                 var employees = await _companyRepository.GetEmployeesAsync(companyId,parameters);

@@ -7,7 +7,7 @@ using System.Linq.Dynamic.Core;
 namespace Routine.APi.Helpers
 {
     //（视频P37）
-    public static class IQueryableExtensions
+    public static class IQueryableExtensions //这并不是一个接口，这种命名方式有点问题
     {
         //这是一个 IQueryable<T> 的拓展方法，接收排序字符串与属性映射字典，返回排序后的 IQueryable<T>
         public static IQueryable<T> ApplySort<T>(this IQueryable<T> source,
@@ -27,12 +27,14 @@ namespace Routine.APi.Helpers
                 return source;
             }
 
+            //空字符串用来储存 OrderBy T-SQL 命令
+            string ordering = "";
+
             //将 orderBy 字符串按 ',' 划分为数组
             var orderByAfterSplit = orderBy.Split(",");
             //依次处理数组中的每个排序依据
-            foreach (var orderByClause in orderByAfterSplit.Reverse()) //需要 Reverse() 反转
+            foreach (var orderByClause in orderByAfterSplit)
             {
-                //去除首位空格
                 var trimmedOrderByClause = orderByClause.Trim();
                 //是否 DESC
                 var orderDescending = trimmedOrderByClause.EndsWith(" desc");
@@ -55,19 +57,26 @@ namespace Routine.APi.Helpers
                     throw new ArgumentNullException(nameof(propertyMappingValue));
                 }
 
-                foreach(var destinationProperty in propertyMappingValue.DestinationProperties.Reverse()) //需要 Reverse() 反转
+                foreach(var destinationProperty in propertyMappingValue.DestinationProperties)
                 {
                     if (propertyMappingValue.Revert)
                     {
                         orderDescending = !orderDescending;
                     }
 
-                    //需要安装 System.Linq.Dynamic.Core 包，才能使用以下代码
-                    //System.Linq.Dynamic.Core 包中的 OrderBy 可以直接叠加，不用 .OrderBy().ThenBy() 这种写法
-                    //越后面被 OrderBy 的属性，权重越高，所以在书面的代码中使用了两次 Reverse() 反转
-                    source = source.OrderBy(destinationProperty + (orderDescending ? " descending" : " ascending"));
+                    //构造 order by T-SQL 命令
+                    //与视频中的方法略有不同，这种方法不用 Revert() 两次，性能更好
+                    if (ordering.Length > 0)
+                    {
+                        ordering += ",";
+                    }
+                    ordering += destinationProperty + (orderDescending ? " descending" : " ascending");
                 }
             }
+
+            //执行 order by T-SQL 命令
+            //需要安装 System.Linq.Dynamic.Core 包，才能使用以下代码
+            source = source.OrderBy(ordering);
             return source;
         }
     }

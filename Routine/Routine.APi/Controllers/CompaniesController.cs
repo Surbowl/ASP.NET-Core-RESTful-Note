@@ -90,17 +90,27 @@ namespace Routine.APi.Controllers
     {
         private readonly ICompanyRepository _companyRepository;
         private readonly IMapper _mapper;
+        private readonly IPropertyMappingService _propertyMappingService;
 
-        public CompaniesController(ICompanyRepository companyRepository, IMapper mapper)
+        public CompaniesController(ICompanyRepository companyRepository,
+                                   IMapper mapper,
+                                   IPropertyMappingService propertyMappingService)
         {
             _companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _propertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
         [HttpGet(Name = nameof(GetCompanies))]
         [HttpHead] //添加对 Http Head 的支持，Head 请求只会返回 Header 信息，没有 Body（视频P16）
         public async Task<IActionResult> GetCompanies([FromQuery]CompanyDtoParameters parameters) //Task<IActionResult> = Task<ActionResult<List<CompanyDto>>>
         {
+            //判断Uri query string 中的 orderby 是否合法（视频P38）
+            if (!_propertyMappingService.ValidMappingExistsFor<CompanyDto, Company>(parameters.OrderBy))
+            {
+                return BadRequest();  //返回状态码400
+            }
+
             //GetCompaniesAsync(parameters) 返回的是经过翻页处理的 PagedList<T>（视频P35）
             var companies = await _companyRepository.GetCompaniesAsync(parameters);
 
@@ -238,7 +248,8 @@ namespace Routine.APi.Controllers
                             pageNumber = parameters.PageNumber - 1,
                             pageSize = parameters.PageSize,
                             companyName = parameters.companyName,
-                            searchTerm = parameters.SearchTerm
+                            searchTerm = parameters.SearchTerm,
+                            orderBy=parameters.OrderBy //排序 Uri query string（视频P38）
                         });
 
                 case ResourceUnType.NextPage: //下一页
@@ -249,7 +260,8 @@ namespace Routine.APi.Controllers
                             pageNumber = parameters.PageNumber + 1,
                             pageSize = parameters.PageSize,
                             companyName = parameters.companyName,
-                            searchTerm = parameters.SearchTerm
+                            searchTerm = parameters.SearchTerm,
+                            orderBy = parameters.OrderBy //排序 Uri query string（视频P38）
                         });
 
                 default: //当前页

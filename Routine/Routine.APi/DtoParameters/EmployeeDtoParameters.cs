@@ -19,7 +19,7 @@ namespace Routine.APi.DtoParameters
             set => _pageSize = (value > MaxPageSize) ? MaxPageSize : value;
         }
 
-        //排序依据（默认用 Name）
+        //排序依据（默认用 Name，应该使用 Dto 中的命名方式）
         public string OrderBy { get; set; } = "Name";
     }
 }

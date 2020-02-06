@@ -103,16 +103,28 @@ namespace Routine.APi.Services
             }
 
             var queryExpression = _context.Companies as IQueryable<Company>;
+            //查找指定公司
             if (!string.IsNullOrWhiteSpace(parameters.companyName))
             {
                 parameters.companyName = parameters.companyName.Trim();
                 queryExpression = queryExpression.Where(x => x.Name == parameters.companyName);
             }
+            //模糊搜索
             if (!string.IsNullOrWhiteSpace(parameters.SearchTerm))
             {
                 parameters.SearchTerm = parameters.SearchTerm.Trim();
                 queryExpression = queryExpression.Where(x => x.Name.Contains(parameters.SearchTerm)
                                                             || x.Introduction.Contains(parameters.SearchTerm));
+            }
+            //排序（视频P38）
+            if (!string.IsNullOrWhiteSpace(parameters.OrderBy))
+            {
+                //取得映射关系字典
+                var mappingDictionary = _propertyMappingService.GetPropertyMapping<CompanyDto, Company>();
+                //ApplySort 是一个自己定义的拓展方法
+                //传入 FormQuery 中的 OrderBy 字符串与映射关系字典
+                //返回排序好的字符串
+                queryExpression = queryExpression.ApplySort(parameters.OrderBy, mappingDictionary);
             }
 
             //return await queryExpression.Skip((parameters.PageNumber - 1) * parameters.PageSize)
@@ -184,20 +196,20 @@ namespace Routine.APi.Services
                 throw new ArgumentNullException(nameof(companyId));
             }
 
-            var items = _context.Employees.Where(x => x.CompanyId == companyId);
+            var queryExpression = _context.Employees.Where(x => x.CompanyId == companyId);
 
             //性别筛选
             if (!string.IsNullOrWhiteSpace(parameters.Gender))
             {
                 parameters.Gender = parameters.Gender.Trim();
                 var gender = Enum.Parse<Gender>(parameters.Gender);
-                items = items.Where(x => x.Gender == gender);
+                queryExpression = queryExpression.Where(x => x.Gender == gender);
             }
             //查询
             if (!string.IsNullOrWhiteSpace(parameters.Q))
             {
                 parameters.Q = parameters.Q.Trim();
-                items = items.Where(x => x.EmployeeNo.Contains(parameters.Q)
+                queryExpression = queryExpression.Where(x => x.EmployeeNo.Contains(parameters.Q)
                                             || x.FirstName.Contains(parameters.Q)
                                             || x.LastName.Contains(parameters.Q));
             }
@@ -209,10 +221,10 @@ namespace Routine.APi.Services
                 //ApplySort 是一个自己定义的拓展方法
                 //传入 FormQuery 中的 OrderBy 字符串与映射关系字典
                 //返回排序好的字符串
-                items = items.ApplySort(parameters.OrderBy, mappingDictionary);
+                queryExpression = queryExpression.ApplySort(parameters.OrderBy, mappingDictionary);
             }
             
-            return await items.ToListAsync();
+            return await queryExpression.ToListAsync();
         }
 
         public void UpdateCompany(Company company)
