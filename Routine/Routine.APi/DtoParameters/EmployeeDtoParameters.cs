@@ -18,5 +18,8 @@ namespace Routine.APi.DtoParameters
             get => _pageSize;
             set => _pageSize = (value > MaxPageSize) ? MaxPageSize : value;
         }
+
+        //排序依据（默认用 Name）
+        public string OrderBy { get; set; } = "Name";
     }
 }

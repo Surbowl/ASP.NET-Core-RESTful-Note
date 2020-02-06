@@ -148,7 +148,7 @@ namespace Routine.APi.Services
                 .FirstOrDefaultAsync();
         }
 
-        //在视频P36之前（不使用 DtoParameters 时）
+        //在视频P36之前（不使用 DtoParameters，并且没有排序功能）
         //public async Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId, string genderDisplay, string q)
         //{
         //    if (companyId == Guid.Empty)
@@ -172,7 +172,7 @@ namespace Routine.APi.Services
         //    }
         //    return await items.OrderBy(x => x.EmployeeNo).ToListAsync();
         //}
-
+        //视频P36之后
         public async Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId, EmployeeDtoParameters parameters)
         {
             if (companyId == Guid.Empty)
@@ -181,12 +181,14 @@ namespace Routine.APi.Services
             }
 
             var items = _context.Employees.Where(x => x.CompanyId == companyId);
+            //性别筛选
             if (!string.IsNullOrWhiteSpace(parameters.Gender))
             {
                 parameters.Gender = parameters.Gender.Trim();
                 var gender = Enum.Parse<Gender>(parameters.Gender);
                 items = items.Where(x => x.Gender == gender);
             }
+            //查询
             if (!string.IsNullOrWhiteSpace(parameters.Q))
             {
                 parameters.Q = parameters.Q.Trim();
@@ -194,7 +196,9 @@ namespace Routine.APi.Services
                                          || x.FirstName.Contains(parameters.Q)
                                          || x.LastName.Contains(parameters.Q));
             }
-            return await items.OrderBy(x => x.EmployeeNo).ToListAsync();
+            //排序（视频P36）
+            items.ApplySort(parameters.OrderBy, mappingDictionary);
+            return await items.ToListAsync();
         }
 
         public void UpdateCompany(Company company)

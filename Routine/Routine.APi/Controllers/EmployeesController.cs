@@ -28,7 +28,7 @@ namespace Routine.APi.Controllers
 
         }
 
-        //在视频P36之前（不使用 DtoParameters 时）
+        //在视频P36之前（不使用 DtoParameters，并且没有排序功能）
         //[HttpGet]
         //public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
         //                                                        [FromQuery(Name ="gender")]string genderDisplay,
@@ -45,7 +45,7 @@ namespace Routine.APi.Controllers
         //        return NotFound();
         //    }
         //}
-
+        //视频P36之后
         [HttpGet]
         public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
                                                                 [FromQuery]EmployeeDtoParameters parameters)
@@ -141,7 +141,7 @@ namespace Routine.APi.Controllers
         }
 
         /*
-         * HTTP PATCH 举例
+         * HTTP PATCH 举例（视频P32）
          * 原资源：
          *      {
          *        "baz":"qux",
