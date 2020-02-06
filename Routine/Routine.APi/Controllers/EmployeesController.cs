@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Routine.APi.DtoParameters;
 using Routine.APi.Entities;
 using Routine.APi.Models;
 using Routine.APi.Services;
@@ -27,14 +28,31 @@ namespace Routine.APi.Controllers
 
         }
 
+        //在视频P36之前（不使用 DtoParameters 时）
+        //[HttpGet]
+        //public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
+        //                                                        [FromQuery(Name ="gender")]string genderDisplay,
+        //                                                        [FromQuery]string q)
+        //{
+        //    if (await _companyRepository.CompanyExistsAsync(companyId))
+        //    {
+        //        var employees = await _companyRepository.GetEmployeesAsync(companyId,genderDisplay,q);
+        //        var employeeDtos = _mapper.Map<IEnumerable<EmployeeDto>>(employees);
+        //        return Ok(employeeDtos);
+        //    }
+        //    else
+        //    {
+        //        return NotFound();
+        //    }
+        //}
+
         [HttpGet]
         public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
-                                                                [FromQuery(Name ="gender")]string genderDisplay,
-                                                                [FromQuery]string q)
+                                                                [FromQuery]EmployeeDtoParameters parameters)
         {
             if (await _companyRepository.CompanyExistsAsync(companyId))
             {
-                var employees = await _companyRepository.GetEmployeesAsync(companyId,genderDisplay,q);
+                var employees = await _companyRepository.GetEmployeesAsync(companyId,parameters);
                 var employeeDtos = _mapper.Map<IEnumerable<EmployeeDto>>(employees);
                 return Ok(employeeDtos);
             }

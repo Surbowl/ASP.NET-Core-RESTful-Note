@@ -148,7 +148,32 @@ namespace Routine.APi.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId, string genderDisplay, string q)
+        //在视频P36之前（不使用 DtoParameters 时）
+        //public async Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId, string genderDisplay, string q)
+        //{
+        //    if (companyId == Guid.Empty)
+        //    {
+        //        throw new ArgumentNullException(nameof(companyId));
+        //    }
+
+        //    var items = _context.Employees.Where(x => x.CompanyId == companyId);
+        //    if (!string.IsNullOrWhiteSpace(genderDisplay))
+        //    {
+        //        genderDisplay = genderDisplay.Trim();
+        //        var gender = Enum.Parse<Gender>(genderDisplay);
+        //        items = items.Where(x => x.Gender == gender);
+        //    }
+        //    if (!string.IsNullOrWhiteSpace(q))
+        //    {
+        //        q = q.Trim();
+        //        items = items.Where(x => x.EmployeeNo.Contains(q)
+        //                                 || x.FirstName.Contains(q)
+        //                                 || x.LastName.Contains(q));
+        //    }
+        //    return await items.OrderBy(x => x.EmployeeNo).ToListAsync();
+        //}
+
+        public async Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId, EmployeeDtoParameters parameters)
         {
             if (companyId == Guid.Empty)
             {
@@ -156,18 +181,18 @@ namespace Routine.APi.Services
             }
 
             var items = _context.Employees.Where(x => x.CompanyId == companyId);
-            if (!string.IsNullOrWhiteSpace(genderDisplay))
+            if (!string.IsNullOrWhiteSpace(parameters.Gender))
             {
-                genderDisplay = genderDisplay.Trim();
-                var gender = Enum.Parse<Gender>(genderDisplay);
+                parameters.Gender = parameters.Gender.Trim();
+                var gender = Enum.Parse<Gender>(parameters.Gender);
                 items = items.Where(x => x.Gender == gender);
             }
-            if (!string.IsNullOrWhiteSpace(q))
+            if (!string.IsNullOrWhiteSpace(parameters.Q))
             {
-                q = q.Trim();
-                items = items.Where(x => x.EmployeeNo.Contains(q)
-                                         || x.FirstName.Contains(q)
-                                         || x.LastName.Contains(q));
+                parameters.Q = parameters.Q.Trim();
+                items = items.Where(x => x.EmployeeNo.Contains(parameters.Q)
+                                         || x.FirstName.Contains(parameters.Q)
+                                         || x.LastName.Contains(parameters.Q));
             }
             return await items.OrderBy(x => x.EmployeeNo).ToListAsync();
         }
