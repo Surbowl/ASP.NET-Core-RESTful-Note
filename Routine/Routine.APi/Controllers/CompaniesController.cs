@@ -179,6 +179,23 @@ namespace Routine.APi.Controllers
             return CreatedAtRoute(nameof(GetCompany), new { companyId = returnDto.Id }, returnDto);
         }
 
+        //在视频P36之前（不使用 DtoParameters，没有排序功能）
+        //[HttpDelete("{companyId}")]
+        //public async Task<IActionResult> DeleteEmployeeForCompany(Guid companyId)
+        //{
+        //    var companyEntity = await _companyRepository.GetCompanyAsync(companyId);
+        //    if (companyEntity == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    //把 Employees 加载到内存中，使删除时可以追踪 ？？？（视频P33）
+        //    await _companyRepository.GetEmployeesAsync(companyId, null, null);
+
+        //    _companyRepository.DeleteCompany(companyEntity);
+        //    await _companyRepository.SaveAsync();
+        //    return NoContent();
+        //}
+        //视频P36之后
         [HttpDelete("{companyId}")]
         public async Task<IActionResult> DeleteEmployeeForCompany(Guid companyId)
         {
@@ -188,7 +205,7 @@ namespace Routine.APi.Controllers
                 return NotFound();
             }
             //把 Employees 加载到内存中，使删除时可以追踪 ？？？（视频P33）
-            await _companyRepository.GetEmployeesAsync(companyId, null, null);
+            await _companyRepository.GetEmployeesAsync(companyId, new EmployeeDtoParameters());
 
             _companyRepository.DeleteCompany(companyEntity);
             await _companyRepository.SaveAsync();

@@ -28,7 +28,7 @@ namespace Routine.APi.Controllers
 
         }
 
-        //在视频P36之前（不使用 DtoParameters，并且没有排序功能）
+        //在视频P36之前（不使用 DtoParameters，没有排序功能）
         //[HttpGet]
         //public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
         //                                                        [FromQuery(Name ="gender")]string genderDisplay,

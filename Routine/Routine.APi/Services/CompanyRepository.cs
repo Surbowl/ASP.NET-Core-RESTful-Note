@@ -3,6 +3,7 @@ using Routine.APi.Data;
 using Routine.APi.DtoParameters;
 using Routine.APi.Entities;
 using Routine.APi.Helpers;
+using Routine.APi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,13 @@ namespace Routine.APi.Services
     public class CompanyRepository : ICompanyRepository
     {
         private readonly RoutineDbContext _context;
+        private readonly IPropertyMappingService _propertyMappingService;
 
-        public CompanyRepository(RoutineDbContext context)
+        public CompanyRepository(RoutineDbContext context,IPropertyMappingService propertyMappingService)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _propertyMappingService = propertyMappingService 
+                                      ?? throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
         public void AddCompany(Company company)
@@ -148,7 +152,7 @@ namespace Routine.APi.Services
                 .FirstOrDefaultAsync();
         }
 
-        //在视频P36之前（不使用 DtoParameters，并且没有排序功能）
+        //在视频P36之前（不使用 DtoParameters，没有排序功能）
         //public async Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId, string genderDisplay, string q)
         //{
         //    if (companyId == Guid.Empty)
@@ -181,6 +185,7 @@ namespace Routine.APi.Services
             }
 
             var items = _context.Employees.Where(x => x.CompanyId == companyId);
+
             //性别筛选
             if (!string.IsNullOrWhiteSpace(parameters.Gender))
             {
@@ -193,11 +198,20 @@ namespace Routine.APi.Services
             {
                 parameters.Q = parameters.Q.Trim();
                 items = items.Where(x => x.EmployeeNo.Contains(parameters.Q)
-                                         || x.FirstName.Contains(parameters.Q)
-                                         || x.LastName.Contains(parameters.Q));
+                                            || x.FirstName.Contains(parameters.Q)
+                                            || x.LastName.Contains(parameters.Q));
             }
-            //排序（视频P36）
-            items.ApplySort(parameters.OrderBy, mappingDictionary);
+            //排序（视频P36-P37）
+            if (!string.IsNullOrWhiteSpace(parameters.OrderBy))
+            {
+                //取得映射关系字典
+                var mappingDictionary = _propertyMappingService.GetPropertyMapping<EmployeeDto, Employee>();
+                //ApplySort 是一个自己定义的拓展方法
+                //传入 FormQuery 中的 OrderBy 字符串与映射关系字典
+                //返回排序好的字符串
+                items = items.ApplySort(parameters.OrderBy, mappingDictionary);
+            }
+            
             return await items.ToListAsync();
         }
 
