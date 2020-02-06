@@ -18,7 +18,7 @@ namespace Routine.APi
             {
                 try
                 {
-                    //每次运行都把数据库删了重建
+                    //每次运行都把数据库删了重建（视频P1）
                     var dbContext = scope.ServiceProvider.GetService<RoutineDbContext>();
                     dbContext.Database.EnsureDeleted();
                     dbContext.Database.Migrate();

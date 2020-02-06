@@ -39,7 +39,7 @@ namespace Routine.APi
             /*
              * .Net Core 默认使用 Problem details for HTTP APIs RFC (7807) 标准
              * - 为所需错误信息的应用，定义了通用的错误格式
-             * - 可以识别出问题属于哪个 API
+             * - 可以识别问题属于哪个 API
              */
 
             //以下是一种较旧的写法，在本项目中不使用（视频P8）
@@ -93,7 +93,7 @@ namespace Routine.APi
             //使用 AutoMapper，扫描当前应用域的所有 Assemblies 寻找 AutoMapper 的配置文件（视频P12）
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            //AddScoped 针对每一个 HTTP 请求都会建立一个新的实例
+            //AddScoped 针对每一次 HTTP 请求都会建立一个新的实例（视频P1）
             services.AddScoped<ICompanyRepository, CompanyRepository>();
 
             services.AddDbContext<RoutineDbContext>(options =>
@@ -107,7 +107,7 @@ namespace Routine.APi
         {
             /*
              * 添加中间件的顺序非常重要。如果你把授权中间件放在了Controller的后边，
-             * 那么即使需要授权，那么请求也会先到达Controller并执行里面的代码，这样的话授权就没有意义了。
+             * 那么即使需要授权，那么请求也会先到达Controller并执行里面的代码，这样的话授权就没有意义了。（视频P1）
              */
 
             if (env.IsDevelopment())

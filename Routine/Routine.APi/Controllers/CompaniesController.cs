@@ -93,8 +93,7 @@ namespace Routine.APi.Controllers
 
         public CompaniesController(ICompanyRepository companyRepository, IMapper mapper)
         {
-            _companyRepository = companyRepository ??
-                                        throw new ArgumentNullException(nameof(companyRepository));
+            _companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
