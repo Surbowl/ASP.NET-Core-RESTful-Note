@@ -3,6 +3,7 @@ using Routine.APi.Data;
 using Routine.APi.DtoParameters;
 using Routine.APi.Entities;
 using Routine.APi.Helpers;
+using Routine.APi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,13 @@ namespace Routine.APi.Services
     public class CompanyRepository : ICompanyRepository
     {
         private readonly RoutineDbContext _context;
+        private readonly IPropertyMappingService _propertyMappingService;
 
-        public CompanyRepository(RoutineDbContext context)
+        public CompanyRepository(RoutineDbContext context,IPropertyMappingService propertyMappingService)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _propertyMappingService = propertyMappingService 
+                                      ?? throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
         public void AddCompany(Company company)
@@ -99,16 +103,28 @@ namespace Routine.APi.Services
             }
 
             var queryExpression = _context.Companies as IQueryable<Company>;
+            //查找指定公司
             if (!string.IsNullOrWhiteSpace(parameters.companyName))
             {
                 parameters.companyName = parameters.companyName.Trim();
                 queryExpression = queryExpression.Where(x => x.Name == parameters.companyName);
             }
+            //模糊搜索
             if (!string.IsNullOrWhiteSpace(parameters.SearchTerm))
             {
                 parameters.SearchTerm = parameters.SearchTerm.Trim();
                 queryExpression = queryExpression.Where(x => x.Name.Contains(parameters.SearchTerm)
                                                             || x.Introduction.Contains(parameters.SearchTerm));
+            }
+            //排序（视频P38）
+            if (!string.IsNullOrWhiteSpace(parameters.OrderBy))
+            {
+                //取得映射关系字典
+                var mappingDictionary = _propertyMappingService.GetPropertyMapping<CompanyDto, Company>();
+                //ApplySort 是一个自己定义的拓展方法
+                //传入 FormQuery 中的 OrderBy 字符串与映射关系字典
+                //返回排序好的字符串
+                queryExpression = queryExpression.ApplySort(parameters.OrderBy, mappingDictionary);
             }
 
             //return await queryExpression.Skip((parameters.PageNumber - 1) * parameters.PageSize)
@@ -148,28 +164,67 @@ namespace Routine.APi.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId, string genderDisplay, string q)
+        //在视频P36之前（不使用 DtoParameters，没有排序功能）
+        //public async Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId, string genderDisplay, string q)
+        //{
+        //    if (companyId == Guid.Empty)
+        //    {
+        //        throw new ArgumentNullException(nameof(companyId));
+        //    }
+
+        //    var items = _context.Employees.Where(x => x.CompanyId == companyId);
+        //    if (!string.IsNullOrWhiteSpace(genderDisplay))
+        //    {
+        //        genderDisplay = genderDisplay.Trim();
+        //        var gender = Enum.Parse<Gender>(genderDisplay);
+        //        items = items.Where(x => x.Gender == gender);
+        //    }
+        //    if (!string.IsNullOrWhiteSpace(q))
+        //    {
+        //        q = q.Trim();
+        //        items = items.Where(x => x.EmployeeNo.Contains(q)
+        //                                 || x.FirstName.Contains(q)
+        //                                 || x.LastName.Contains(q));
+        //    }
+        //    return await items.OrderBy(x => x.EmployeeNo).ToListAsync();
+        //}
+        //视频P36之后
+        public async Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId, EmployeeDtoParameters parameters)
         {
             if (companyId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(companyId));
             }
 
-            var items = _context.Employees.Where(x => x.CompanyId == companyId);
-            if (!string.IsNullOrWhiteSpace(genderDisplay))
+            var queryExpression = _context.Employees.Where(x => x.CompanyId == companyId);
+
+            //性别筛选
+            if (!string.IsNullOrWhiteSpace(parameters.Gender))
             {
-                genderDisplay = genderDisplay.Trim();
-                var gender = Enum.Parse<Gender>(genderDisplay);
-                items = items.Where(x => x.Gender == gender);
+                parameters.Gender = parameters.Gender.Trim();
+                var gender = Enum.Parse<Gender>(parameters.Gender);
+                queryExpression = queryExpression.Where(x => x.Gender == gender);
             }
-            if (!string.IsNullOrWhiteSpace(q))
+            //查询
+            if (!string.IsNullOrWhiteSpace(parameters.Q))
             {
-                q = q.Trim();
-                items = items.Where(x => x.EmployeeNo.Contains(q)
-                                         || x.FirstName.Contains(q)
-                                         || x.LastName.Contains(q));
+                parameters.Q = parameters.Q.Trim();
+                queryExpression = queryExpression.Where(x => x.EmployeeNo.Contains(parameters.Q)
+                                            || x.FirstName.Contains(parameters.Q)
+                                            || x.LastName.Contains(parameters.Q));
             }
-            return await items.OrderBy(x => x.EmployeeNo).ToListAsync();
+            //排序（视频P36-P37）
+            if (!string.IsNullOrWhiteSpace(parameters.OrderBy))
+            {
+                //取得映射关系字典
+                var mappingDictionary = _propertyMappingService.GetPropertyMapping<EmployeeDto, Employee>();
+                //ApplySort 是一个自己定义的拓展方法
+                //传入 FormQuery 中的 OrderBy 字符串与映射关系字典
+                //返回排序好的字符串
+                queryExpression = queryExpression.ApplySort(parameters.OrderBy, mappingDictionary);
+            }
+            
+            return await queryExpression.ToListAsync();
         }
 
         public void UpdateCompany(Company company)

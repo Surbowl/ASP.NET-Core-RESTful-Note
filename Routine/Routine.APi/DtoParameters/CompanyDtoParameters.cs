@@ -7,7 +7,7 @@
         public string SearchTerm { get; set; }
 
         public int PageNumber { get; set; } = 1; //默认值为1
-
+        public string OrderBy { get; set; } = "Name"; //默认用公司名字排序
         private int _pageSize = 5;
 
         public int PageSize

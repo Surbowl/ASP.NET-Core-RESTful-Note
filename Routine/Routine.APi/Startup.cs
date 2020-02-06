@@ -100,6 +100,10 @@ namespace Routine.APi
             {
                 options.UseSqlServer("Data Source=localhost;DataBase=routine;Integrated Security=SSPI");
             });
+
+            //注册排序使用的属性映射服务（视频P37）
+            //轻量服务可以使用 Transient
+            services.AddTransient<IPropertyMappingService, PropertyMappingService>();
         }
 
         // 路由中间件 This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

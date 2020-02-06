@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Routine.APi.DtoParameters;
 using Routine.APi.Entities;
 using Routine.APi.Models;
 using Routine.APi.Services;
@@ -19,22 +20,46 @@ namespace Routine.APi.Controllers
     {
         private readonly ICompanyRepository _companyRepository;
         private readonly IMapper _mapper;
+        private readonly IPropertyMappingService _propertyMappingService;
 
-        public EmployeesController(ICompanyRepository companyRepository, IMapper mapper)
+        public EmployeesController(ICompanyRepository companyRepository, IMapper mapper,IPropertyMappingService propertyMappingService)
         {
             _companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-
+            _propertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
+        //在视频P36之前（不使用 DtoParameters，没有排序功能）
+        //[HttpGet]
+        //public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
+        //                                                        [FromQuery(Name ="gender")]string genderDisplay,
+        //                                                        [FromQuery]string q)
+        //{
+        //    if (await _companyRepository.CompanyExistsAsync(companyId))
+        //    {
+        //        var employees = await _companyRepository.GetEmployeesAsync(companyId,genderDisplay,q);
+        //        var employeeDtos = _mapper.Map<IEnumerable<EmployeeDto>>(employees);
+        //        return Ok(employeeDtos);
+        //    }
+        //    else
+        //    {
+        //        return NotFound();
+        //    }
+        //}
+        //视频P36之后
         [HttpGet]
         public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
-                                                                [FromQuery(Name ="gender")]string genderDisplay,
-                                                                [FromQuery]string q)
+                                                                [FromQuery]EmployeeDtoParameters parameters)
         {
+            //判断Uri query string 中的 orderby 是否合法（视频P38）
+            if (!_propertyMappingService.ValidMappingExistsFor<CompanyDto, Company>(parameters.OrderBy))
+            {
+                return BadRequest();  //返回状态码400
+            }
+
             if (await _companyRepository.CompanyExistsAsync(companyId))
             {
-                var employees = await _companyRepository.GetEmployeesAsync(companyId,genderDisplay,q);
+                var employees = await _companyRepository.GetEmployeesAsync(companyId,parameters);
                 var employeeDtos = _mapper.Map<IEnumerable<EmployeeDto>>(employees);
                 return Ok(employeeDtos);
             }
@@ -123,7 +148,7 @@ namespace Routine.APi.Controllers
         }
 
         /*
-         * HTTP PATCH 举例
+         * HTTP PATCH 举例（视频P32）
          * 原资源：
          *      {
          *        "baz":"qux",
