@@ -53,8 +53,16 @@ namespace Routine.APi.Helpers
 
         public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source,int pageNumber,int pageSize)
         {
+            //下面这种写法是错误的，会抛出异常。不能在前一个操作完成之前，在该上下文中启动第二个操作。
+            //var countTask = source.CountAsync();
+            //var itemsTask = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            //var count = await countTask;
+            //var items = await itemsTask;
+
+            //正确写法
             var count = await source.CountAsync();
             var items = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
             return new PagedList<T>(items, count, pageNumber, pageSize);
         }
     }
