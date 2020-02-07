@@ -33,7 +33,7 @@ namespace Routine.APi.Helpers
             var converter = TypeDescriptor.GetConverter(elementType);
             var values = value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
                                 .Select(x => converter.ConvertFromString(x.Trim())).ToArray();
-            var typedValues = Array.CreateInstance(elementType, value.Length);
+            var typedValues = Array.CreateInstance(elementType, values.Length);
             values.CopyTo(typedValues, 0);
             bindingContext.Model = typedValues;
             bindingContext.Result = ModelBindingResult.Success(bindingContext.Model);
