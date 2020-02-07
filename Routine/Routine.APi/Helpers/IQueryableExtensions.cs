@@ -10,6 +10,7 @@ namespace Routine.APi.Helpers
     public static class IQueryableExtensions //这并不是一个接口，这种命名方式有点问题
     {
         //这是一个 IQueryable<T> 的拓展方法，接收排序字符串与属性映射字典，返回排序后的 IQueryable<T>
+        //关于拓展方法，可以参考杨老师的另一个视频课程 https://www.bilibili.com/video/av62661924?p=5
         public static IQueryable<T> ApplySort<T>(this IQueryable<T> source,
                                                  string orderBy,
                                                  Dictionary<string, PropertyMappingValue> mappingDictionary)
