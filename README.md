@@ -1,7 +1,4 @@
 # ASP.NET-Core-RESTful-Note
-
-__ASP.NET Core 3.x 实现 RESTful API 的学习笔记__
-<br>
 ## 关于
 本仓库是[杨旭](https://www.cnblogs.com/cgzl/)（solenovex）《[使用 ASP.NET Core 3.x 构建 RESTful Web API](https://www.bilibili.com/video/av77957694)》系列课程的个人学习笔记。
 <br>
