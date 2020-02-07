@@ -19,6 +19,6 @@
 <br>
 例如：[截至视频 P8 的代码](https://github.com/Surbowl/ASP.NET-Core-RESTful-Note/releases/tag/P8)、 [截至视频 P19 的代码](https://github.com/Surbowl/ASP.NET-Core-RESTful-Note/releases/tag/P19) 等。
 <br><br><br><br>
-欢迎大家对内容进行补充，只要是合理内容都可以 Pull。
+欢迎大家对内容进行补充，只要是合理内容都可以提交。
 <br>
 非常感谢杨老师 🤗
