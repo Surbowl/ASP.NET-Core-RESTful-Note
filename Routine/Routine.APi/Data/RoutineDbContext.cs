@@ -34,7 +34,7 @@ namespace Routine.APi.Data
                 .OnDelete(DeleteBehavior.Cascade);
             //种子数据
             modelBuilder.Entity<Company>().HasData(
-                new Company
+                new Company  //1
                 {
                     Id = Guid.Parse("bbdee09c-089b-4d30-bece-44df5923716c"),
                     Name = "Microsoft",
@@ -43,7 +43,7 @@ namespace Routine.APi.Data
                     Product ="Software",
                     Introduction = "Great Company"
                 },
-                new Company
+                new Company  //2
                 {
                     Id = Guid.Parse("6fb600c1-9011-4fd7-9234-881379716440"),
                     Name = "Google",
@@ -52,7 +52,7 @@ namespace Routine.APi.Data
                     Product = "Software",
                     Introduction = "Don't be evil"
                 },
-                new Company
+                new Company  //3
                 {
                     Id = Guid.Parse("5efc910b-2f45-43df-afee-620d40542853"),
                     Name = "Alipapa",
@@ -61,7 +61,7 @@ namespace Routine.APi.Data
                     Product = "Software",
                     Introduction = "Fubao Company"
                 },
-                new Company
+                new Company  //4
                 {
                     Id = Guid.Parse("8cc04f96-2c42-4f76-832e-1903835b0190"),
                     Name = "Huawei",
@@ -70,7 +70,7 @@ namespace Routine.APi.Data
                     Product = "Hardware",
                     Introduction = "Building a Smart World of Everything"
                 },
-                new Company
+                new Company  //5
                 {
                     Id = Guid.Parse("d1f1f410-f563-4355-aa91-4774d693363f"),
                     Name = "Xiaomi",
@@ -79,7 +79,7 @@ namespace Routine.APi.Data
                     Product = "Hardware",
                     Introduction = "Born for a fever"
                 },
-                new Company
+                new Company  //6
                 {
                     Id = Guid.Parse("19b8d0f9-4fdf-41ab-b172-f2d5d725b6d9"),
                     Name = "Wuliangye",
@@ -88,7 +88,7 @@ namespace Routine.APi.Data
                     Product = "Wine",
                     Introduction = "Great Wine"
                 },
-                new Company
+                new Company  //7
                 {
                     Id = Guid.Parse("6c28b511-34f6-43b2-89f6-fa3dab77bcf9"),
                     Name = "UNIQLO",
@@ -97,7 +97,7 @@ namespace Routine.APi.Data
                     Product = "Costume",
                     Introduction = "Good clothes"
                 },
-                new Company
+                new Company  //8
                 {
                     Id = Guid.Parse("4ab2b4af-45ce-41b3-8aed-5447c3140330"),
                     Name = "ZARA",
@@ -106,7 +106,7 @@ namespace Routine.APi.Data
                     Product = "Costume",
                     Introduction = "Stylish clothes"
                 },
-                new Company
+                new Company  //9
                 {
                     Id = Guid.Parse("cd11c117-551c-409f-80e9-c15d89fd7ca8"),
                     Name = "Mercedes-Benz",
@@ -115,7 +115,7 @@ namespace Routine.APi.Data
                     Product = "Car",
                     Introduction = "The best car"
                 },
-                new Company
+                new Company  //10
                 {
                     Id = Guid.Parse("a39f7877-3849-48a1-b6af-e35b90c73e6a"),
                     Name = "BMW",
@@ -124,7 +124,7 @@ namespace Routine.APi.Data
                     Product = "Car",
                     Introduction = "Good car"
                 },
-                new Company
+                new Company  //11
                 {
                     Id = Guid.Parse("eb8fc677-2600-4fdb-a8ef-51c006e7fc20"),
                     Name = "Yahoo!",
