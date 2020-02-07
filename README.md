@@ -13,9 +13,9 @@
 - [How to unapply a migration](https://stackoverflow.com/questions/38192450/how-to-unapply-a-migration-in-asp-net-core-with-ef-core)
 
 ## 版本
-master 分支是最新的，截至目前涵盖视频 [P38](https://www.bilibili.com/video/av77957694?p=38) 的内容。
+`master` 分支是最新的，截至目前涵盖视频 [P38](https://www.bilibili.com/video/av77957694?p=38) 的内容。
 <br><br>
-在寻找更早的版本？欢迎查看本仓库的 [Releases](https://github.com/Surbowl/ASP.NET-Core-RESTful-Note/releases)，在课程的每个阶段都有 Release。
+在寻找更早的版本？欢迎查看本仓库的 [Releases](https://github.com/Surbowl/ASP.NET-Core-RESTful-Note/releases)，在课程的每个阶段都有 Release；
 <br>
 例如：[截至视频 P8 的代码](https://github.com/Surbowl/ASP.NET-Core-RESTful-Note/releases/tag/P8)、 [截至视频 P19 的代码](https://github.com/Surbowl/ASP.NET-Core-RESTful-Note/releases/tag/P19) 等。
 <br><br><br>
