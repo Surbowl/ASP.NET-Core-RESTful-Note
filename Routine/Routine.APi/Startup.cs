@@ -101,18 +101,18 @@ namespace Routine.APi
                 options.UseSqlServer("Data Source=localhost;DataBase=routine;Integrated Security=SSPI");
             });
 
-            //注册排序使用的属性映射服务（视频P37）
             //轻量服务可以使用 Transient
+            //注册排序使用的属性映射服务（视频P37）
             services.AddTransient<IPropertyMappingService, PropertyMappingService>();
+            //判断 Uri query 字符串中的 fields 是否合法（视频P39）
+            services.AddTransient<IPropertyCheckerService, PropertyCheckerService>();
         }
 
         // 路由中间件 This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            /*
-             * 添加中间件的顺序非常重要。如果你把授权中间件放在了Controller的后边，
-             * 那么即使需要授权，那么请求也会先到达Controller并执行里面的代码，这样的话授权就没有意义了。（视频P1）
-             */
+            //添加中间件的顺序非常重要，如果你把授权中间件放在了Controller的后边，
+            //那么即使需要授权，那么请求也会先到达Controller并执行里面的代码，这样的话授权就没有意义了。（视频P1）
 
             if (env.IsDevelopment())
             {

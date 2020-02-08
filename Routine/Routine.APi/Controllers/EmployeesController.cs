@@ -29,24 +29,6 @@ namespace Routine.APi.Controllers
             _propertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
-        //在视频P36之前（不使用 DtoParameters，没有排序功能）
-        //[HttpGet]
-        //public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
-        //                                                        [FromQuery(Name ="gender")]string genderDisplay,
-        //                                                        [FromQuery]string q)
-        //{
-        //    if (await _companyRepository.CompanyExistsAsync(companyId))
-        //    {
-        //        var employees = await _companyRepository.GetEmployeesAsync(companyId,genderDisplay,q);
-        //        var employeeDtos = _mapper.Map<IEnumerable<EmployeeDto>>(employees);
-        //        return Ok(employeeDtos);
-        //    }
-        //    else
-        //    {
-        //        return NotFound();
-        //    }
-        //}
-        //视频P36之后
         [HttpGet]
         public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
                                                                 [FromQuery]EmployeeDtoParameters parameters)

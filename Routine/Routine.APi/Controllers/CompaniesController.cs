@@ -91,22 +91,31 @@ namespace Routine.APi.Controllers
         private readonly ICompanyRepository _companyRepository;
         private readonly IMapper _mapper;
         private readonly IPropertyMappingService _propertyMappingService;
+        private readonly IPropertyCheckerService _propertyCheckerService;
 
         public CompaniesController(ICompanyRepository companyRepository,
                                    IMapper mapper,
-                                   IPropertyMappingService propertyMappingService)
+                                   IPropertyMappingService propertyMappingService,
+                                   IPropertyCheckerService propertyCheckerService)
         {
             _companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _propertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
+            _propertyCheckerService = propertyCheckerService ?? throw new ArgumentNullException(nameof(propertyCheckerService));
         }
 
         [HttpGet(Name = nameof(GetCompanies))]
         [HttpHead] //添加对 Http Head 的支持，Head 请求只会返回 Header 信息，没有 Body（视频P16）
-        public async Task<IActionResult> GetCompanies([FromQuery]CompanyDtoParameters parameters) //Task<IActionResult> = Task<ActionResult<List<CompanyDto>>>
+        public async Task<IActionResult> GetCompanies([FromQuery]CompanyDtoParameters parameters)
         {
-            //判断Uri query string 中的 orderby 是否合法（视频P38）
+            //判断Uri query 字符串中的 orderby 是否合法（视频P38）
             if (!_propertyMappingService.ValidMappingExistsFor<CompanyDto, Company>(parameters.OrderBy))
+            {
+                return BadRequest();  //返回状态码400
+            }
+
+            //判断Uri query 字符串中的 fields 是否合法（视频P39）
+            if (!_propertyCheckerService.TypeHasProperties<CompanyDto>(parameters.Fields))
             {
                 return BadRequest();  //返回状态码400
             }
@@ -147,22 +156,28 @@ namespace Routine.APi.Controllers
             //        Name = company.Name
             //    });
             //}
-
+            //
             //使用 AutoMapper（视频P12）
             var companyDtos = _mapper.Map<IEnumerable<CompanyDto>>(companies);
 
-            return Ok(companyDtos);  //OK() 返回状态码200
+            return Ok(companyDtos.ShapeData(parameters.Fields));  //OK() 返回状态码200
         }
 
         [HttpGet("{companyId}", Name = nameof(GetCompany))]  //[Route("{companyId}")]
-        public async Task<IActionResult> GetCompany(Guid companyId)
+        public async Task<IActionResult> GetCompany(Guid companyId,string fields)
         {
+            //判断Uri query 字符串中的 fields 是否合法（视频P39）
+            if (!_propertyCheckerService.TypeHasProperties<CompanyDto>(fields))
+            {
+                return BadRequest();  //返回状态码400
+            }
+
             var company = await _companyRepository.GetCompanyAsync(companyId);
             if (company == null)
             {
                 return NotFound();  //返回状态码404
             }
-            return Ok(_mapper.Map<CompanyDto>(company));
+            return Ok(_mapper.Map<CompanyDto>(company).ShapeData(fields));
         }
 
         [HttpPost]
@@ -189,23 +204,6 @@ namespace Routine.APi.Controllers
             return CreatedAtRoute(nameof(GetCompany), new { companyId = returnDto.Id }, returnDto);
         }
 
-        //在视频P36之前（不使用 DtoParameters，没有排序功能）
-        //[HttpDelete("{companyId}")]
-        //public async Task<IActionResult> DeleteEmployeeForCompany(Guid companyId)
-        //{
-        //    var companyEntity = await _companyRepository.GetCompanyAsync(companyId);
-        //    if (companyEntity == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    //把 Employees 加载到内存中，使删除时可以追踪 ？？？（视频P33）
-        //    await _companyRepository.GetEmployeesAsync(companyId, null, null);
-
-        //    _companyRepository.DeleteCompany(companyEntity);
-        //    await _companyRepository.SaveAsync();
-        //    return NoContent();
-        //}
-        //视频P36之后
         [HttpDelete("{companyId}")]
         public async Task<IActionResult> DeleteEmployeeForCompany(Guid companyId)
         {
@@ -242,15 +240,18 @@ namespace Routine.APi.Controllers
             {
                 case ResourceUnType.PreviousPage: //上一页
                     return Url.Link(
+                        //API 名
                         nameof(GetCompanies),
+                        //Uri Query 字符串参数
                         new
                         {
                             pageNumber = parameters.PageNumber - 1,
                             pageSize = parameters.PageSize,
                             companyName = parameters.companyName,
                             searchTerm = parameters.SearchTerm,
-                            orderBy=parameters.OrderBy //排序 Uri query string（视频P38）
-                        });
+                            orderBy = parameters.OrderBy, //排序（视频P38）
+                            fields = parameters.Fields  //数据塑形（视频P39）
+                        }); ;
 
                 case ResourceUnType.NextPage: //下一页
                     return Url.Link(
@@ -261,7 +262,8 @@ namespace Routine.APi.Controllers
                             pageSize = parameters.PageSize,
                             companyName = parameters.companyName,
                             searchTerm = parameters.SearchTerm,
-                            orderBy = parameters.OrderBy //排序 Uri query string（视频P38）
+                            orderBy = parameters.OrderBy,
+                            fields = parameters.Fields
                         });
 
                 default: //当前页
@@ -272,7 +274,9 @@ namespace Routine.APi.Controllers
                             pageNumber = parameters.PageNumber,
                             pageSize = parameters.PageSize,
                             companyName = parameters.companyName,
-                            searchTerm = parameters.SearchTerm
+                            searchTerm = parameters.SearchTerm,
+                            orderBy = parameters.OrderBy,
+                            fields = parameters.Fields
                         });
             }
         }
