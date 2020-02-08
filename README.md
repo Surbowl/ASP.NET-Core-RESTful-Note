@@ -3,7 +3,7 @@
 <br>
 包含课程中的完整项目代码，并注释有随堂笔记。
 <br><br>
-与原课程略有不同，本项目使用 SQL Server 数据库。如需使用 MySql 请参考视频 [P1](https://www.bilibili.com/video/av77957694?p=1) 第 18 分钟安装 MySql 的相应 EF 包，并参考第 33 分钟重新生成 Migration。
+与原课程略有不同，本项目使用 SQL Server 数据库。如需使用 MySql 请参考视频 [P1](https://www.bilibili.com/video/av77957694?p=1) 第 18 分钟安装 MySql 的相应 EF 包。
 
 ## 小地图
 - [视频课程](https://www.bilibili.com/video/av77957694)
