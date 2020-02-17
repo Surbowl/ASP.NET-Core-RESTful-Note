@@ -4,7 +4,7 @@ using Routine.APi.Models;
 using System;
 
 /// <summary>
-/// AutoMapper 映射关系 配置文件
+/// AutoMapper 映射关系 配置文件（视频P12）
 /// </summary>
 namespace Routine.APi.Profiles
 {

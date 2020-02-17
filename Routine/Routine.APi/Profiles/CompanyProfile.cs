@@ -3,7 +3,7 @@ using Routine.APi.Entities;
 using Routine.APi.Models;
 
 /// <summary>
-/// AutoMapper 映射关系 配置文件
+/// AutoMapper 映射关系 配置文件（视频P12）
 /// </summary>
 namespace Routine.APi.Profiles
 {
