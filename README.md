@@ -1,6 +1,7 @@
 # ASP.NET-Core-RESTful-Note
-[![image](https://raw.githubusercontent.com/Surbowl/ASP.NET-Core-RESTful-Note/master/cover.png)](https://www.bilibili.com/video/av77957694)
-<br>
+
+<img src="https://raw.githubusercontent.com/Surbowl/ASP.NET-Core-RESTful-Note/master/cover.png" width="400" height="251" alt="cover">
+
 本仓库是[杨旭](https://www.cnblogs.com/cgzl/)（solenovex）《[使用 ASP.NET Core 3.x 构建 RESTful Web API](https://www.bilibili.com/video/av77957694)》系列课程的学习笔记。
 <br>
 包含课程中的完整项目代码，并注释有随堂笔记。
