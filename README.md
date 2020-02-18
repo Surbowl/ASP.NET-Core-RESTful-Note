@@ -1,12 +1,9 @@
 # ASP.NET-Core-RESTful-Note
 
-<a href="https://www.bilibili.com/video/av77957694">
-<img src="https://raw.githubusercontent.com/Surbowl/ASP.NET-Core-RESTful-Note/master/cover.png" width="400" height="251" alt="cover">
-</a>
-<br>
+[![image](https://raw.githubusercontent.com/Surbowl/ASP.NET-Core-RESTful-Note/master/cover.png)](https://www.bilibili.com/video/av77957694)
 
 本仓库是[杨旭](https://www.cnblogs.com/cgzl/)（solenovex）《[使用 ASP.NET Core 3.x 构建 RESTful Web API](https://www.bilibili.com/video/av77957694)》系列课程的学习笔记。
-<br>
+<br><br>
 包含课程中的完整项目代码，并注释有随堂笔记。
 <br><br>
 与原课程略有不同，本项目使用 SQL Server 数据库。如需使用 SQLite 请参考视频 [P1](https://www.bilibili.com/video/av77957694?p=1) 第 18 分钟安装 SQLite 的相应 EF 包。
@@ -28,5 +25,5 @@
 欢迎大家对内容进行补充，只要是合理内容都可以在 [GitHub](https://github.com/Surbowl/ASP.NET-Core-RESTful-Note) 提交 pull requests 
 <br>
 （[码云仓库](https://gitee.com/surbowl/ASP.NET-Core-RESTful-Note)是强制同步仓库，请勿提交 pull requests）
-<br>
+<br><br>
 非常感谢杨老师 🤗
