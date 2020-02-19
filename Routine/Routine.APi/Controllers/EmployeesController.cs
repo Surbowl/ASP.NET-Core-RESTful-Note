@@ -29,7 +29,7 @@ namespace Routine.APi.Controllers
             _propertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
-        [HttpGet]
+        [HttpGet(Name =nameof(GetEmployeesForCompany))]
         public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
                                                                 [FromQuery]EmployeeDtoParameters parameters)
         {
@@ -70,7 +70,7 @@ namespace Routine.APi.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost(Name =nameof(CreateEmployeeForCompany))]
         public async Task<IActionResult> CreateEmployeeForCompany([FromRoute]Guid companyId,
                                                                   [FromBody]EmployeeAddDto employee)
         //此处的 [FromRoute] 与 [FromBody] 其实不指定也可以，会自动匹配

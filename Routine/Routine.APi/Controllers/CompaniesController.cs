@@ -177,7 +177,13 @@ namespace Routine.APi.Controllers
             {
                 return NotFound();  //返回状态码404
             }
-            return Ok(_mapper.Map<CompanyDto>(company).ShapeData(fields));
+
+            //支持HATEOAS（视频P41）
+            var linkedDict = _mapper.Map<CompanyDto>(company).ShapeData(fields) as IDictionary<string, object>;
+            var links = CreateLinksForCompany(companyId, fields);
+            linkedDict.Add("links", links);
+
+            return Ok(linkedDict);
         }
 
         [HttpPost]
@@ -199,19 +205,29 @@ namespace Routine.APi.Controllers
             _companyRepository.AddCompany(entity);
             await _companyRepository.SaveAsync();
             var returnDto = _mapper.Map<CompanyDto>(entity);
+
+            //支持HATEOAS（视频P41）
+            //通过数据塑形，将 CompanyDto 转为 ExpandoObject
+            //然后再使用 as 将 ExpandoObject 转为 IDictionary
+            var linkedDict = returnDto.ShapeData(null) as IDictionary<string, object>;
+            var links = CreateLinksForCompany(returnDto.Id, null);
+            linkedDict.Add("links", links);
+
             //返回状态码201
             //通过使用 CreatedAtRoute 返回时可以在 Header 中添加一个地址（Loaction）
-            return CreatedAtRoute(nameof(GetCompany), new { companyId = returnDto.Id }, returnDto);
+            //此处 linkedDict["Id"] 注意大小写应与 Dto 中的属性名一致
+            return CreatedAtRoute(nameof(GetCompany), new { companyId = linkedDict["Id"] }, linkedDict);
         }
 
-        [HttpDelete("{companyId}")]
-        public async Task<IActionResult> DeleteEmployeeForCompany(Guid companyId)
+        [HttpDelete("{companyId}", Name = nameof(DeleteCompany))]
+        public async Task<IActionResult> DeleteCompany(Guid companyId)
         {
             var companyEntity = await _companyRepository.GetCompanyAsync(companyId);
             if (companyEntity == null)
             {
                 return NotFound();
             }
+            //删除 Company 时将属于它的 Employees 一并删除
             //把 Employees 加载到内存中，使删除时可以追踪 ？？？（视频P33）
             await _companyRepository.GetEmployeesAsync(companyId, new EmployeeDtoParameters());
 
@@ -279,6 +295,48 @@ namespace Routine.APi.Controllers
                             fields = parameters.Fields
                         });
             }
+        }
+
+        /// <summary>
+        /// 创建 GetCompany 时的 links，支持HATEOAS（视频P41）
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <param name="fields"></param>
+        /// <returns></returns>
+        private IEnumerable<LinkDto> CreateLinksForCompany(Guid companyId,string fields)
+        {
+            var links = new List<LinkDto>();
+
+            //GetCompany 的 link
+            if (string.IsNullOrWhiteSpace(fields))
+            {
+                links.Add(new LinkDto(Url.Link(nameof(GetCompany), new { companyId }), //href - 超链接
+                                      "self",                                          //rel - 与当前资源的关系或描述
+                                      "GET"));                                         //method - 方法
+            }
+            else
+            {
+                links.Add(new LinkDto(Url.Link(nameof(GetCompany), new { companyId ,fields}),
+                                      "self",
+                                      "GET"));
+            }
+
+            //DeleteCompany 的 link
+            links.Add(new LinkDto(Url.Link(nameof(DeleteCompany), new { companyId, fields }),
+                                      "delete_company",
+                                      "DELETE"));
+
+            //CreateEmployeeForCompany 的 link
+            links.Add(new LinkDto(Url.Link(nameof(EmployeesController.CreateEmployeeForCompany), new { companyId }),
+                                      "create_employee_for_company",
+                                      "POST"));
+
+            //GetEmployeesForCompany 的 link
+            links.Add(new LinkDto(Url.Link(nameof(EmployeesController.GetEmployeesForCompany), new { companyId }),
+                                      "employees",
+                                      "GET"));
+
+            return links;
         }
     }
 }
