@@ -1,14 +1,14 @@
-﻿{
+{
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
     "Routine.APi": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/companies",
-      "applicationUrl": "http://localhost:5000",
+      "launchUrl": "api",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "http://localhost:5000"
     }
   }
 }

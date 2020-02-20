@@ -7,6 +7,7 @@ using Routine.APi.Models;
 using Routine.APi.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -123,29 +124,21 @@ namespace Routine.APi.Controllers
             //GetCompaniesAsync(parameters) 返回的是经过翻页处理的 PagedList<T>（视频P35）
             var companies = await _companyRepository.GetCompaniesAsync(parameters);
 
-            //向 Header 中添加翻页信息（视频P35）
-            //上一页的 URI
-            var previousPageLink = companies.HasPrevious
-                                ? CreateCompaniesResourceUri(parameters, ResourceUnType.PreviousPage) 
-                                : null;
-            //下一页的 URI
-            var nextPageLink = companies.HasNext
-                                ? CreateCompaniesResourceUri(parameters, ResourceUnType.NextPage)
-                                : null;
+            //向 Headers 中添加翻页信息
             var paginationMetdata = new
             {
                 totalCount = companies.TotalCount,
                 pageSize = companies.PageSize,
                 currentPage = companies.CurrentPage,
-                totalPages = companies.TotalPages,
-                previousPageLink,
-                nextPageLink
+                totalPages = companies.TotalPages
             };
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetdata,
-                                                                          new JsonSerializerOptions //URI 中的‘&’、‘？’符号不应该被转义，因此改用不安全的 Encoder
+                                                                          new JsonSerializerOptions
                                                                           {
-                                                                              Encoder=JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                                                                              //URI 中的‘&’、‘？’符号不应该被转义，因此改用不安全的 Encoder
+                                                                              Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                                                                           }));
+
             //不使用 AutoMapper
             //var companyDtos = new List<CompanyDto>();
             //foreach(var company in companies)
@@ -160,11 +153,28 @@ namespace Routine.APi.Controllers
             //使用 AutoMapper（视频P12）
             var companyDtos = _mapper.Map<IEnumerable<CompanyDto>>(companies);
 
-            return Ok(companyDtos.ShapeData(parameters.Fields));  //OK() 返回状态码200
+            //支持 HATEOAS（视频P42）
+            var shapedData = companyDtos.ShapeData(parameters.Fields);
+            //首先创建 Companies 列表中每个 Company 的 Links
+            var shapedCompaniesWithLinks = shapedData.Select(c =>
+            {
+                var companyDict = c as IDictionary<string, object>;
+                var companyLinks = CreateLinksForCompany((Guid)companyDict["Id"], null);
+                companyDict.Add("links", companyLinks);
+                return companyDict;
+            });
+            //然后创建 Companies 列表的 Links
+            var linkedCollectionResource = new
+            {
+                value = shapedCompaniesWithLinks,
+                links = CreateLinksForCompany(parameters, companies.HasPrevious, companies.HasNext)
+            };
+
+            return Ok(linkedCollectionResource);  //OK() 返回状态码200
         }
 
         [HttpGet("{companyId}", Name = nameof(GetCompany))]  //[Route("{companyId}")]
-        public async Task<IActionResult> GetCompany(Guid companyId,string fields)
+        public async Task<IActionResult> GetCompany(Guid companyId, string fields)
         {
             //判断Uri query 字符串中的 fields 是否合法（视频P39）
             if (!_propertyCheckerService.TypeHasProperties<CompanyDto>(fields))
@@ -186,7 +196,7 @@ namespace Routine.APi.Controllers
             return Ok(linkedDict);
         }
 
-        [HttpPost]
+        [HttpPost(Name = nameof(CreateCompany))]
         public async Task<IActionResult> CreateCompany([FromBody]CompanyAddDto company)  //Task<IActionResult> = Task<ActionResult<CompanyDto>
         {
             //使用 [ApiController] 属性后，会自动返回400错误，无需再使用以下代码：
@@ -250,16 +260,14 @@ namespace Routine.APi.Controllers
         /// <param name="type"></param>
         /// <returns></returns>
         private string CreateCompaniesResourceUri(CompanyDtoParameters parameters,
-                                                  ResourceUnType type)
+                                                  ResourceUriType type)
         {
             switch (type)
             {
-                case ResourceUnType.PreviousPage: //上一页
+                case ResourceUriType.PreviousPage: //上一页
                     return Url.Link(
-                        //API 名
-                        nameof(GetCompanies),
-                        //Uri Query 字符串参数
-                        new
+                        nameof(GetCompanies), //方法名
+                        new                   //Uri Query 字符串参数
                         {
                             pageNumber = parameters.PageNumber - 1,
                             pageSize = parameters.PageSize,
@@ -269,7 +277,7 @@ namespace Routine.APi.Controllers
                             fields = parameters.Fields  //数据塑形（视频P39）
                         }); ;
 
-                case ResourceUnType.NextPage: //下一页
+                case ResourceUriType.NextPage: //下一页
                     return Url.Link(
                         nameof(GetCompanies),
                         new
@@ -282,7 +290,8 @@ namespace Routine.APi.Controllers
                             fields = parameters.Fields
                         });
 
-                default: //当前页
+                //case ResourceUriType.CurrentPage: //当前页
+                default:
                     return Url.Link(
                         nameof(GetCompanies),
                         new
@@ -298,12 +307,12 @@ namespace Routine.APi.Controllers
         }
 
         /// <summary>
-        /// 创建 GetCompany 时的 links，支持HATEOAS（视频P41）
+        /// GetCompany 时的 links，使单个支援支持HATEOAS（视频P41）
         /// </summary>
         /// <param name="companyId"></param>
         /// <param name="fields"></param>
         /// <returns></returns>
-        private IEnumerable<LinkDto> CreateLinksForCompany(Guid companyId,string fields)
+        private IEnumerable<LinkDto> CreateLinksForCompany(Guid companyId, string fields)
         {
             var links = new List<LinkDto>();
 
@@ -316,7 +325,7 @@ namespace Routine.APi.Controllers
             }
             else
             {
-                links.Add(new LinkDto(Url.Link(nameof(GetCompany), new { companyId ,fields}),
+                links.Add(new LinkDto(Url.Link(nameof(GetCompany), new { companyId, fields }),
                                       "self",
                                       "GET"));
             }
@@ -335,6 +344,39 @@ namespace Routine.APi.Controllers
             links.Add(new LinkDto(Url.Link(nameof(EmployeesController.GetEmployeesForCompany), new { companyId }),
                                       "employees",
                                       "GET"));
+
+            return links;
+        }
+
+        /// <summary>
+        /// GetCompanies 时的 links，使集合支援支持HATEOAS（视频P42）
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        private IEnumerable<LinkDto> CreateLinksForCompany(CompanyDtoParameters parameters, bool hasPrevious, bool hasNext)
+        {
+            var links = new List<LinkDto>();
+
+            //CurrentPage 当前页链接
+            links.Add(new LinkDto(CreateCompaniesResourceUri(parameters, ResourceUriType.CurrentPage),
+                      "self",
+                      "GET"));
+
+            if (hasPrevious)
+            {
+                //PreviousPage 上一页链接
+                links.Add(new LinkDto(CreateCompaniesResourceUri(parameters, ResourceUriType.PreviousPage),
+                          "previous_page",
+                          "GET"));
+            }
+
+            if (hasNext)
+            {
+                //NextPage 下一页链接
+                links.Add(new LinkDto(CreateCompaniesResourceUri(parameters, ResourceUriType.NextPage),
+                          "next_page",
+                          "GET"));
+            }
 
             return links;
         }

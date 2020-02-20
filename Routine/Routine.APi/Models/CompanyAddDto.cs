@@ -10,7 +10,7 @@ namespace Routine.APi.Models
         [Display(Name = "公司名")]
         [Required(ErrorMessage = "{0}这个字段是必填的")]
         [MaxLength(100, ErrorMessage = "{0}的最大长度不可以超过{1}")]
-        public string Name { get; set; }
+        public string Name { get; set; }  //请注意，此处的属性名为 Name ，与视频中的 CompanyName 不同
 
         [Display(Name = "国家")]
         [Required(ErrorMessage = "{0}这个字段是必填的")]

@@ -77,7 +77,7 @@ namespace Routine.APi
                     {
                         var problemDetails = new ValidationProblemDetails(context.ModelState)
                         {
-                            Type = "http://www.baidu.com",
+                            Type = "https://www.bilibili.com/video/av77957694",
                             Title = "出现错误",
                             Status = StatusCodes.Status422UnprocessableEntity,
                             Detail = "请看详细信息",
