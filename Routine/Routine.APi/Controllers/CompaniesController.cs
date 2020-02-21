@@ -135,7 +135,7 @@ namespace Routine.APi.Controllers
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetdata,
                                                                           new JsonSerializerOptions
                                                                           {
-                                                                              //URI 中的‘&’、‘？’符号不应该被转义，因此改用不安全的 Encoder
+                                                                              //为了防止 URI 中的‘&’、‘？’符号被转义，使用“不安全”的 Encoder
                                                                               Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                                                                           }));
 
