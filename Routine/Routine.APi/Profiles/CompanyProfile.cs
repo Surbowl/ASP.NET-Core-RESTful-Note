@@ -16,6 +16,7 @@ namespace Routine.APi.Profiles
             //属性名称一致时自动赋值
             //自动忽略空引用
             CreateMap<Company, CompanyDto>();
+            CreateMap<Company, CompanyFullDto>();
             CreateMap<CompanyAddDto, Company>();
         }
     }

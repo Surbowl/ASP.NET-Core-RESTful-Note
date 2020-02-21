@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using Routine.APi.DtoParameters;
 using Routine.APi.Entities;
 using Routine.APi.Helpers;
@@ -107,8 +108,17 @@ namespace Routine.APi.Controllers
 
         [HttpGet(Name = nameof(GetCompanies))]
         [HttpHead] //添加对 Http Head 的支持，Head 请求只会返回 Header 信息，没有 Body（视频P16）
-        public async Task<IActionResult> GetCompanies([FromQuery]CompanyDtoParameters parameters)
+        public async Task<IActionResult> GetCompanies([FromQuery]CompanyDtoParameters parameters,
+                                                      [FromHeader(Name="Accept")]  //mediaType 从 Header 获取
+                                                      string acceptMediaType)
         {
+            //Vendor-specific Media Types（视频P43）
+            //尝试进行解析
+            if (!MediaTypeHeaderValue.TryParse(acceptMediaType, out MediaTypeHeaderValue parsedAcceptMediaType))
+            {
+                return BadRequest();  //返回状态码400
+            }
+
             //判断Uri query 字符串中的 orderby 是否合法（视频P38）
             if (!_propertyMappingService.ValidMappingExistsFor<CompanyDto, Company>(parameters.OrderBy))
             {
@@ -139,43 +149,54 @@ namespace Routine.APi.Controllers
                                                                               Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                                                                           }));
 
-            //不使用 AutoMapper
-            //var companyDtos = new List<CompanyDto>();
-            //foreach(var company in companies)
-            //{
-            //    companyDtos.Add(new CompanyDto
-            //    {
-            //        Id = company.Id,
-            //        Name = company.Name
-            //    });
-            //}
-            //
             //使用 AutoMapper（视频P12）
             var companyDtos = _mapper.Map<IEnumerable<CompanyDto>>(companies);
+            var shapedData = companyDtos.ShapeData(parameters.Fields);
 
             //支持 HATEOAS（视频P42）
-            var shapedData = companyDtos.ShapeData(parameters.Fields);
-            //首先创建 Companies 列表中每个 Company 的 Links
-            var shapedCompaniesWithLinks = shapedData.Select(c =>
+            //使用 Vendor-specific Media Types ，即返回 value 与 links （视频P43）
+            if (parsedAcceptMediaType.MediaType == "application/vnd.company.hateoas+json")
             {
-                var companyDict = c as IDictionary<string, object>;
-                var companyLinks = CreateLinksForCompany((Guid)companyDict["Id"], null);
-                companyDict.Add("links", companyLinks);
-                return companyDict;
-            });
-            //然后创建 Companies 列表的 Links
-            var linkedCollectionResource = new
-            {
-                value = shapedCompaniesWithLinks,
-                links = CreateLinksForCompany(parameters, companies.HasPrevious, companies.HasNext)
-            };
-
-            return Ok(linkedCollectionResource);  //OK() 返回状态码200
+                //HATEOAS（视频P41）
+                //首先创建 Companies 列表中每个 Company 的 Links
+                var shapedCompaniesWithLinks = shapedData.Select(c =>
+                {
+                    var companyDict = c as IDictionary<string, object>;
+                    var links = CreateLinksForCompany((Guid)companyDict["Id"], null);
+                    companyDict.Add("links", links);
+                    return companyDict;
+                });
+                //然后创建 Companies 列表的 Links
+                var linkedCollectionResource = new
+                {
+                    value = shapedCompaniesWithLinks,
+                    links = CreateLinksForCompany(parameters, companies.HasPrevious, companies.HasNext)
+                };
+                return Ok(linkedCollectionResource);  //返回状态码200
+            }
+            //不使用 Vendor-specific Media Types，只返回 value
+            return Ok(shapedData);
         }
 
-        [HttpGet("{companyId}", Name = nameof(GetCompany))]  //[Route("{companyId}")]
-        public async Task<IActionResult> GetCompany(Guid companyId, string fields)
+        [HttpGet("{companyId}", Name = nameof(GetCompany))]  //可省略 [Route("{companyId}")]
+        [Produces("application/json",//当遇到以下 Accept 值时，实际返回 application/json（视频P43）
+                                     "application/vnd.company.hateoas+json",
+                                     "application/vnd.company.friendly+json",
+                                     "application/vnd.company.friendly.hateoas+json",
+                                     "application/vnd.company.full+json",
+                                     "application/vnd.company.full.hateoas+json")]
+        public async Task<IActionResult> GetCompany(Guid companyId,
+                                                    string fields,
+                                                    [FromHeader(Name="Accept")]  //mediaType 从 Header 获取
+                                                    string acceptMediaType)
         {
+            //Vendor-specific Media Types（视频P43）
+            //尝试进行解析
+            if (!MediaTypeHeaderValue.TryParse(acceptMediaType, out MediaTypeHeaderValue parsedAcceptMediaType))
+            {
+                return BadRequest();  //返回状态码400
+            }
+
             //判断Uri query 字符串中的 fields 是否合法（视频P39）
             if (!_propertyCheckerService.TypeHasProperties<CompanyDto>(fields))
             {
@@ -188,16 +209,35 @@ namespace Routine.APi.Controllers
                 return NotFound();  //返回状态码404
             }
 
-            //支持HATEOAS（视频P41）
-            var linkedDict = _mapper.Map<CompanyDto>(company).ShapeData(fields) as IDictionary<string, object>;
-            var links = CreateLinksForCompany(companyId, fields);
-            linkedDict.Add("links", links);
+            //（视频P41-43）
+            //是否需要 links（HATEOAS）
+            bool includeLinks = parsedAcceptMediaType
+                               .SubTypeWithoutSuffix
+                               .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase); //忽略大小写
+            //是否需要 FullDto
+            var isFull = parsedAcceptMediaType
+                         .SubTypeWithoutSuffix.ToString()
+                         .Contains("full", StringComparison.InvariantCultureIgnoreCase);
 
-            return Ok(linkedDict);
+            var resource = isFull ?
+                         _mapper.Map<CompanyFullDto>(company).ShapeData(fields)
+                         :
+                         _mapper.Map<CompanyDto>(company).ShapeData(fields)
+                         as IDictionary<string, object>;
+
+            if (includeLinks)
+            {
+                var links = CreateLinksForCompany(companyId, fields);
+                resource.Add("links", links);
+            }
+
+            return Ok(resource);
         }
 
         [HttpPost(Name = nameof(CreateCompany))]
-        public async Task<IActionResult> CreateCompany([FromBody]CompanyAddDto company)  //Task<IActionResult> = Task<ActionResult<CompanyDto>
+        public async Task<IActionResult> CreateCompany([FromBody]CompanyAddDto company,  //Task<IActionResult> = Task<ActionResult<CompanyDto>
+                                                       [FromHeader(Name="Accept")]
+                                                       string acceptMediaType)
         {
             //使用 [ApiController] 属性后，会自动返回400错误，无需再使用以下代码：
             //if (!ModelState.IsValid)
@@ -211,22 +251,28 @@ namespace Routine.APi.Controllers
             //    return BadRequest(); //返回状态码400
             //}
 
+            //Vendor-specific Media Types（视频P43）
+            if (!MediaTypeHeaderValue.TryParse(acceptMediaType, out MediaTypeHeaderValue parsedAcceptMediaType))
+            {
+                return BadRequest();  //返回状态码400
+            }
+
             var entity = _mapper.Map<Company>(company);
             _companyRepository.AddCompany(entity);
             await _companyRepository.SaveAsync();
             var returnDto = _mapper.Map<CompanyDto>(entity);
+            var resource = returnDto.ShapeData(null) as IDictionary<string, object>;
 
-            //支持HATEOAS（视频P41）
-            //通过数据塑形，将 CompanyDto 转为 ExpandoObject
-            //然后再使用 as 将 ExpandoObject 转为 IDictionary
-            var linkedDict = returnDto.ShapeData(null) as IDictionary<string, object>;
-            var links = CreateLinksForCompany(returnDto.Id, null);
-            linkedDict.Add("links", links);
-
+            //使用 Vendor-specific Media Types ，即返回 value 与 links （视频P43）
+            if (parsedAcceptMediaType.MediaType == "application/vnd.company.hateoas+json")
+            {
+                //HATEOAS（视频P41）
+                var links = CreateLinksForCompany(returnDto.Id, null);
+                resource.Add("links", links);
+            }
             //返回状态码201
             //通过使用 CreatedAtRoute 返回时可以在 Header 中添加一个地址（Loaction）
-            //此处 linkedDict["Id"] 注意大小写应与 Dto 中的属性名一致
-            return CreatedAtRoute(nameof(GetCompany), new { companyId = linkedDict["Id"] }, linkedDict);
+            return CreatedAtRoute(nameof(GetCompany), new { companyId = returnDto.Id }, resource);
         }
 
         [HttpDelete("{companyId}", Name = nameof(DeleteCompany))]

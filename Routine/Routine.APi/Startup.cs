@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,7 @@ using Newtonsoft.Json.Serialization;
 using Routine.APi.Data;
 using Routine.APi.Services;
 using System;
+using System.Linq;
 
 namespace Routine.APi
 {
@@ -90,6 +92,20 @@ namespace Routine.APi
                         };
                     };
                 });
+
+            //将 NewtonsoftJsonOutputFormatter 设为 application/vnd.company.hateoas+json 的输出格式化器（视频P43）
+            services.Configure<MvcOptions>(options =>
+            {
+                var newtonSoftJsonOutputFormatter = options
+                                                    .OutputFormatters
+                                                    .OfType<NewtonsoftJsonOutputFormatter>()
+                                                    ?.FirstOrDefault();
+                if (newtonSoftJsonOutputFormatter != null)
+                {
+                    newtonSoftJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.company.hateoas+json");
+                }
+            });
+
             //使用 AutoMapper，扫描当前应用域的所有 Assemblies 寻找 AutoMapper 的配置文件（视频P12）
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
