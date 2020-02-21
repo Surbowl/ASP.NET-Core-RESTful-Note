@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Routine.APi.Models
 {
+    //输出使用的 Full Dto（视频P43）
     public class CompanyFullDto
     {
         public Guid Id { get; set; }
