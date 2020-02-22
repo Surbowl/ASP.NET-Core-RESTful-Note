@@ -118,6 +118,7 @@ namespace Routine.APi.Controllers
                                                       string acceptMediaType)
         {
             //尝试解析 MediaTypeHeaderValue（视频P43）
+            //关于 MediaTypeHeaderValue https://docs.microsoft.com/zh-cn/dotnet/api/system.net.http.headers.mediatypeheadervalue
             if (!MediaTypeHeaderValue.TryParse(acceptMediaType, out MediaTypeHeaderValue parsedAcceptMediaType))
             {
                 return BadRequest();  //返回状态码400

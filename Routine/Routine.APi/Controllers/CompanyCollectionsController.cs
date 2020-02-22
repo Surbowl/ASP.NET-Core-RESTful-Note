@@ -28,6 +28,7 @@ namespace Routine.APi.Controllers
         #region Controllers
         #region HttpGet
 
+        //自定义 Model 绑定器，获取集合资源（视频P24）
         [HttpGet("({ids})", Name = nameof(GetCompanyCollection))]
         public async Task<IActionResult> GetCompanyCollection([FromRoute]
                                                               [ModelBinder(BinderType = typeof(ArrayModelBinder))]
@@ -52,14 +53,11 @@ namespace Routine.APi.Controllers
 
         #region HttpPost
 
+        //同时创建父子关系的资源（视频P23）
         [HttpPost]
         public async Task<IActionResult> CreateCompanyCollection(IEnumerable<CompanyAddDto> companyCollection) //Task<IActionResult> = Task<ActionResult<IEnumerable<CompanyDto>>>
         {
-
-            //
-            // BUG
-            // 此方法没有对 Employees 进行模型验证
-            //
+            //.Net Core 会自动对所有 Company 与 Employee 资源进行模型验证
 
             var companyEntities = _mapper.Map<IEnumerable<Company>>(companyCollection);
             foreach (var company in companyEntities)
