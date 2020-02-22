@@ -28,6 +28,9 @@ namespace Routine.APi
         // 注册服务 This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //添加缓存（视频P46）
+            services.AddResponseCaching();
+
             /*
             * 内容协商：
             * 针对一个响应，当有多种表述格式的时候，选取最佳的一个表述，例如 application/json、application/xml
@@ -44,27 +47,27 @@ namespace Routine.APi
              * - 可以识别问题属于哪个 API
              */
 
-            //以下是一种较旧的写法，在本项目中不使用（视频P8）
+            //以下是一种添加序列化工具的过时写法，在本项目中不再使用（视频P8）
             //services.AddControllers(options =>
             //{
-            //    //启用406状态码
-            //    options.ReturnHttpNotAcceptable = true;
-
             //    //OutputFormatters 默认有且只有 Json 格式
             //    //添加对输出 XML 格式的支持
             //    //此时默认输出格式依然是 Json ,因为 Json 格式位于第一位置
             //    options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
-
             //    //如果在 Index 0 位置插入对 XML 格式的支持，那么默认输出格式是 XML
             //    //options.OutputFormatters.Insert(0, new XmlDataContractSerializerOutputFormatter());
             //});
-            //
-            //以下是较新的写法，AddXmlDataContractSerializerFormatters() 等方法使用更方便。
+
             services.AddControllers(options =>
             {
-                //启用406状态码
+                //启用406状态码（视频P7）
                 options.ReturnHttpNotAcceptable = true;
 
+                //配置缓存字典（视频P46）
+                options.CacheProfiles.Add("120sCacheProfile", new CacheProfile
+                {
+                    Duration = 120
+                });
             })
                 //默认格式取决于序列化工具的添加顺序
                 .AddNewtonsoftJson(options =>  //第三方 JSON 序列化和反序列化工具（会替换掉原本默认的 JSON 序列化工具）（视频P32）
@@ -151,6 +154,9 @@ namespace Routine.APi
                     });
                 });
             }
+
+            //缓存中间件（视频P46）
+            app.UseResponseCaching();
 
             app.UseRouting();
 

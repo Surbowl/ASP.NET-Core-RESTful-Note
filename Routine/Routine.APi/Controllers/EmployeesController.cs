@@ -16,13 +16,14 @@ namespace Routine.APi.Controllers
 {
     [ApiController]
     [Route("api/companies/{companyId}/employees")]
+    [ResponseCache(CacheProfileName = "120sCacheProfile")]  //允许被缓存120秒（视频P46）
     public class EmployeesController : ControllerBase
     {
         private readonly ICompanyRepository _companyRepository;
         private readonly IMapper _mapper;
         private readonly IPropertyMappingService _propertyMappingService;
 
-        public EmployeesController(ICompanyRepository companyRepository, IMapper mapper,IPropertyMappingService propertyMappingService)
+        public EmployeesController(ICompanyRepository companyRepository, IMapper mapper, IPropertyMappingService propertyMappingService)
         {
             _companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -32,19 +33,20 @@ namespace Routine.APi.Controllers
         #region Controllers
         #region HttpGet
 
-        [HttpGet(Name =nameof(GetEmployeesForCompany))]
+        [HttpGet(Name = nameof(GetEmployeesForCompany))]
+        [ResponseCache(Duration = 60)] //专门指定这个方法允许被缓存60秒（视频P46）
         public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
                                                                 [FromQuery]EmployeeDtoParameters parameters)
         {
-            //判断Uri query string 中的 orderby 是否合法（视频P38）
-            if (!_propertyMappingService.ValidMappingExistsFor<CompanyDto, Company>(parameters.OrderBy))
+            //判断 Uri Query 中的 orderBy 字符串是否合法（视频P38）
+            if (!_propertyMappingService.ValidMappingExistsFor<EmployeeDto, Employee>(parameters.OrderBy))
             {
                 return BadRequest();  //返回状态码400
             }
 
             if (await _companyRepository.CompanyExistsAsync(companyId))
             {
-                var employees = await _companyRepository.GetEmployeesAsync(companyId,parameters);
+                var employees = await _companyRepository.GetEmployeesAsync(companyId, parameters);
                 var employeeDtos = _mapper.Map<IEnumerable<EmployeeDto>>(employees);
                 return Ok(employeeDtos);
             }
@@ -54,12 +56,12 @@ namespace Routine.APi.Controllers
             }
         }
 
-        [HttpGet("{employeeId}",Name =nameof(GetEmployeeForCompany))]
-        public async Task<IActionResult> GetEmployeeForCompany(Guid companyId,Guid employeeId)
+        [HttpGet("{employeeId}", Name = nameof(GetEmployeeForCompany))]
+        public async Task<IActionResult> GetEmployeeForCompany(Guid companyId, Guid employeeId)
         {
             if (await _companyRepository.CompanyExistsAsync(companyId))
             {
-                var employee = await _companyRepository.GetEmployeeAsync(companyId,employeeId);
+                var employee = await _companyRepository.GetEmployeeAsync(companyId, employeeId);
                 if (employee == null)
                 {
                     return NotFound();
@@ -77,12 +79,12 @@ namespace Routine.APi.Controllers
 
         #region HttpPost
 
-        [HttpPost(Name =nameof(CreateEmployeeForCompany))]
+        [HttpPost(Name = nameof(CreateEmployeeForCompany))]
         public async Task<IActionResult> CreateEmployeeForCompany([FromRoute]Guid companyId,
                                                                   [FromBody]EmployeeAddDto employee)
         //此处的 [FromRoute] 与 [FromBody] 其实不指定也可以，会自动匹配
         {
-            if (! await _companyRepository.CompanyExistsAsync(companyId))
+            if (!await _companyRepository.CompanyExistsAsync(companyId))
             {
                 return NotFound();
             }
@@ -105,7 +107,7 @@ namespace Routine.APi.Controllers
                                                                   Guid employeeId,
                                                                   EmployeeUpdateDto employeeUpdateDto)
         {
-            if(!await _companyRepository.CompanyExistsAsync(companyId))
+            if (!await _companyRepository.CompanyExistsAsync(companyId))
             {
                 return NotFound();
             }
@@ -229,9 +231,9 @@ namespace Routine.APi.Controllers
         #region HttpDelete
 
         [HttpDelete("{employeeId}")]
-        public async Task<IActionResult> DeleteEmployeeForCompany(Guid companyId,Guid employeeId)
+        public async Task<IActionResult> DeleteEmployeeForCompany(Guid companyId, Guid employeeId)
         {
-            if(!await _companyRepository.CompanyExistsAsync(companyId))
+            if (!await _companyRepository.CompanyExistsAsync(companyId))
             {
                 return NotFound();
             }

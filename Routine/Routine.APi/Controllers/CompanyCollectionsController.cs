@@ -45,7 +45,8 @@ namespace Routine.APi.Controllers
                 return NotFound();
             }
 
-            var dtosToReturn = _mapper.Map<IEnumerable<CompanyDto>>(entities);
+            //使用 Company Full Dto
+            var dtosToReturn = _mapper.Map<IEnumerable<CompanyFullDto>>(entities);
             return Ok(dtosToReturn);
         }
 
