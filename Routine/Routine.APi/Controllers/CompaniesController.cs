@@ -166,8 +166,7 @@ namespace Routine.APi.Controllers
                            :
                            _mapper.Map<IEnumerable<CompanyDto>>(companies).ShapeData(parameters.Fields);
 
-            //支持 HATEOAS（视频P41-P42）
-            //使用 HATEOAS 返回 value 与 links （视频P43）
+            //使用 HATEOAS，返回 value 与 links （视频P43）
             if (includeLinks)
             {
                 //首先创建 Companies 集合中每个 Company 自己的 Links

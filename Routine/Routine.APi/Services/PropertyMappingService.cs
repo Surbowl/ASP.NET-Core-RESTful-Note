@@ -15,6 +15,7 @@ namespace Routine.APi.Services
         //定义属性映射关系字典
 
         //Company Friendly Dto 的属性映射关系字典
+        //GetCompanies 时，无论请求的是 Full Dto 还是 Friendly Dto，都允许按照 Full Dto 中的属性进行排序，所以这个字典用不上了
         //private readonly Dictionary<string, PropertyMappingValue> _companyPropertyMapping
         //    = new Dictionary<string, PropertyMappingValue>(StringComparer.OrdinalIgnoreCase) //Key 大小写不敏感
         //    {
@@ -44,7 +45,7 @@ namespace Routine.APi.Services
                 {"EmployeeNo",new PropertyMappingValue(new List<string>{"EmployeeNo"}) },
                 {"Name",new PropertyMappingValue(new List<string>{"FirstName","LastName"}) },//"Name" 对应 FirstName 与 LastName 两个属性
                 {"GenderDisplay",new PropertyMappingValue(new List<string>{"Gender"}) },
-                {"Age",new PropertyMappingValue(new List<string>{"DateOfBirth"}, true) }     //"Age" 对应 DateOfBirth 属性，并且需要翻转顺序
+                {"Age",new PropertyMappingValue(new List<string>{"DateOfBirth"}, true) }     //"Age" 对应 DateOfBirth 属性，并且要翻转顺序
             };
 
 
