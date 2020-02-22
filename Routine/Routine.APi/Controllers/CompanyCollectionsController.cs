@@ -25,6 +25,9 @@ namespace Routine.APi.Controllers
                                     throw new ArgumentNullException(nameof(companyRepository));
         }
 
+        #region Controllers
+        #region HttpGet
+
         [HttpGet("({ids})", Name = nameof(GetCompanyCollection))]
         public async Task<IActionResult> GetCompanyCollection([FromRoute]
                                                               [ModelBinder(BinderType = typeof(ArrayModelBinder))]
@@ -45,12 +48,17 @@ namespace Routine.APi.Controllers
             return Ok(dtosToReturn);
         }
 
+        #endregion HttpGet
+
+        #region HttpPost
+
         [HttpPost]
         public async Task<IActionResult> CreateCompanyCollection(IEnumerable<CompanyAddDto> companyCollection) //Task<IActionResult> = Task<ActionResult<IEnumerable<CompanyDto>>>
         {
 
             //
-            //此方法没有对 Employees 进行模型验证
+            // BUG
+            // 此方法没有对 Employees 进行模型验证
             //
 
             var companyEntities = _mapper.Map<IEnumerable<Company>>(companyCollection);
@@ -63,5 +71,8 @@ namespace Routine.APi.Controllers
             var idsString = string.Join(",", dtosToReturn.Select(x => x.Id));
             return CreatedAtRoute(nameof(GetCompanyCollection), new { ids = idsString }, dtosToReturn);
         }
+
+        #endregion HttpPost
+        #endregion Controllers
     }
 }

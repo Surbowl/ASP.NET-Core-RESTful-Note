@@ -6,9 +6,15 @@ using System.Reflection;
 namespace Routine.APi.Helpers
 {
     //Object 的拓展方法
-    //用于查询单个数据时的数据塑形（视频P39）
     public static class ObjectExtensions
     {
+        /// <summary>
+        /// 对单个资源进行数据塑形（视频P39）
+        /// </summary>
+        /// <typeparam name="TSource">资源类型</typeparam>
+        /// <param name="source">需要塑形的资源</param>
+        /// <param name="fields">Uri Query 中的 fields 字符串，用于指明需要的属性/字段；如果需要所有属性传入 null 即可</param>
+        /// <returns>塑形后的资源</returns>
         public static ExpandoObject ShapeData<TSource>(this TSource source, string fields)
         {
             if (source == null)

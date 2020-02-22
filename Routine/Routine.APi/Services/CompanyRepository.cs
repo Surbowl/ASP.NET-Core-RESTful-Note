@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace Routine.APi.Services
 {
+    /// <summary>
+    /// Company Repository
+    /// </summary>
     public class CompanyRepository : ICompanyRepository
     {
         private readonly RoutineDbContext _context;
@@ -114,16 +117,16 @@ namespace Routine.APi.Services
             {
                 parameters.SearchTerm = parameters.SearchTerm.Trim();
                 queryExpression = queryExpression.Where(x => x.Name.Contains(parameters.SearchTerm)
-                                                            || x.Introduction.Contains(parameters.SearchTerm));
+                                                             || x.Introduction.Contains(parameters.SearchTerm));
             }
             //排序（视频P38）
             if (!string.IsNullOrWhiteSpace(parameters.OrderBy))
             {
-                //取得映射关系字典
-                var mappingDictionary = _propertyMappingService.GetPropertyMapping<CompanyDto, Company>();
+                //取得属性映射关系字典
+                var mappingDictionary = _propertyMappingService.GetPropertyMapping<CompanyFullDto, Company>();
                 //ApplySort 是一个自己定义的拓展方法
-                //传入 FormQuery 中的 OrderBy 字符串与映射关系字典
-                //返回排序好的字符串
+                //传入 orderBy 字符串与属性映射关系字典
+                //返回排序好的 IQueryable 资源集合
                 queryExpression = queryExpression.ApplySort(parameters.OrderBy, mappingDictionary);
             }
 

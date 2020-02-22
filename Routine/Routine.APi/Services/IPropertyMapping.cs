@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 
 namespace Routine.APi.Services
 {
-    //（视频P37）
-    public class IPropertyMapping
+    /// <summary>
+    /// PropertyMappin 的接口（视频P37）
+    /// </summary>
+    public interface IPropertyMapping
     {
     }
 }

@@ -9,6 +9,9 @@ namespace Routine.APi.Controllers
     [ApiController]
     public class RootController : ControllerBase
     {
+        #region Controllers
+        #region HttpGet
+
         [HttpGet(Name =nameof(GetRoot))]
         public IActionResult GetRoot()
         {
@@ -28,5 +31,8 @@ namespace Routine.APi.Controllers
             };
             return Ok(resource);
         }
+
+        #endregion HttpGet
+        #endregion Controllers
     }
 }

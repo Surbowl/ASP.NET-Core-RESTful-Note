@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Routine.APi.Services
 {
+    /// <summary>
+    /// Company Repository 的接口
+    /// </summary>
     public interface ICompanyRepository
     {
         Task<PagedList<Company>> GetCompaniesAsync(CompanyDtoParameters parameters);

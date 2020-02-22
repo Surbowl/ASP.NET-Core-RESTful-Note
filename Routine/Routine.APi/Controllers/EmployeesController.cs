@@ -29,6 +29,9 @@ namespace Routine.APi.Controllers
             _propertyMappingService = propertyMappingService ?? throw new ArgumentNullException(nameof(propertyMappingService));
         }
 
+        #region Controllers
+        #region HttpGet
+
         [HttpGet(Name =nameof(GetEmployeesForCompany))]
         public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
                                                                 [FromQuery]EmployeeDtoParameters parameters)
@@ -70,6 +73,10 @@ namespace Routine.APi.Controllers
             }
         }
 
+        #endregion HttpGet
+
+        #region HttpPost
+
         [HttpPost(Name =nameof(CreateEmployeeForCompany))]
         public async Task<IActionResult> CreateEmployeeForCompany([FromRoute]Guid companyId,
                                                                   [FromBody]EmployeeAddDto employee)
@@ -88,13 +95,11 @@ namespace Routine.APi.Controllers
                                     returnDto);
         }
 
-        /// <summary>
-        /// 整体更新/替换，PUT不是安全的，但是幂等
-        /// </summary>
-        /// <param name="companyId"></param>
-        /// <param name="employeeId"></param>
-        /// <param name="employeeUpdateDto"></param>
-        /// <returns></returns>
+        #endregion HttpPost
+
+        #region HttpPut
+
+        //整体更新/替换，PUT不是安全的，但是幂等
         [HttpPut("{employeeId}")]
         public async Task<IActionResult> UpdateEmployeeForCompany(Guid companyId,
                                                                   Guid employeeId,
@@ -128,6 +133,10 @@ namespace Routine.APi.Controllers
             await _companyRepository.SaveAsync();
             return NoContent(); //返回状态码204
         }
+
+        #endregion HttpPut
+
+        #region HttpPatch
 
         /*
          * HTTP PATCH 举例（视频P32）
@@ -215,6 +224,10 @@ namespace Routine.APi.Controllers
             return NoContent(); //返回状态码204
         }
 
+        #endregion HttpPatch
+
+        #region HttpDelete
+
         [HttpDelete("{employeeId}")]
         public async Task<IActionResult> DeleteEmployeeForCompany(Guid companyId,Guid employeeId)
         {
@@ -234,6 +247,10 @@ namespace Routine.APi.Controllers
             return NoContent();
         }
 
+        #endregion HttpDelete
+
+        #region HttpOptions
+
         [HttpOptions]
         public IActionResult GetCompaniesOptions()
         {
@@ -241,8 +258,13 @@ namespace Routine.APi.Controllers
             return Ok();
         }
 
+        #endregion HttpOptions
+        #endregion Controllers
+
+        #region Functions
+
         /// <summary>
-        /// 重写 ValidationProblem
+        /// 重写 ValidationProblem（视频P32）
         /// 使 PartiallyUpdateEmployeeForCompany 中的 ValidationProblem() 返回状态码422而不是400
         /// </summary>
         /// <param name="modelStateDictionary"></param>
@@ -253,5 +275,7 @@ namespace Routine.APi.Controllers
                                         .GetRequiredService<IOptions<ApiBehaviorOptions>>();
             return (ActionResult)options.Value.InvalidModelStateResponseFactory(ControllerContext);
         }
+
+        #endregion Functions
     }
 }

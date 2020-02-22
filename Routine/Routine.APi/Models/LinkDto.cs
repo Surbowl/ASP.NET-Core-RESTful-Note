@@ -1,6 +1,8 @@
-﻿//支持HATEOAS（视频P41）
-namespace Routine.APi.Models
+﻿namespace Routine.APi.Models
 {
+    /// <summary>
+    /// HATEOAS 的 links Dto（视频P41）
+    /// </summary>
     public class LinkDto
     {
         public string Href { get; }

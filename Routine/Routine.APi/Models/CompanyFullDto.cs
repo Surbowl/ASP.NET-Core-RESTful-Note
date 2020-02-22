@@ -2,7 +2,9 @@
 
 namespace Routine.APi.Models
 {
-    //输出使用的 Full Dto（视频P43）
+    /// <summary>
+    /// 输出 Company 使用的 Full Dto，包含 Company 的所有属性/字段（视频P43）
+    /// </summary>
     public class CompanyFullDto
     {
         public Guid Id { get; set; }
@@ -11,5 +13,6 @@ namespace Routine.APi.Models
         public string Industry { get; set; }
         public string Product { get; set; }
         public string Introduction { get; set; }
+        public DateTime? BankruptTime { get; set; }
     }
 }

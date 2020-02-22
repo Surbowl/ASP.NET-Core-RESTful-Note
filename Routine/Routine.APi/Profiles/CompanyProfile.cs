@@ -3,7 +3,7 @@ using Routine.APi.Entities;
 using Routine.APi.Models;
 
 /// <summary>
-/// AutoMapper 映射关系 配置文件（视频P12）
+/// AutoMapper 针对 Company 的映射关系配置文件（视频P12）
 /// </summary>
 namespace Routine.APi.Profiles
 {
@@ -18,6 +18,7 @@ namespace Routine.APi.Profiles
             CreateMap<Company, CompanyDto>();
             CreateMap<Company, CompanyFullDto>();
             CreateMap<CompanyAddDto, Company>();
+            CreateMap<CompanyAddWithBankruptTimeDto, Company>();
         }
     }
 }

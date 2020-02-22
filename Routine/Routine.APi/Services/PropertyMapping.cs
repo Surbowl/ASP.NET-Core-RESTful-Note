@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Routine.APi.Services
 {
-    //映射关系（视频P37）
-    //TSource 是源类型，例如 EmployeeDto
-    //TDestination 是目标类型，例如 Employee
+    /// <summary>
+    /// 指明 TSource 与 TDestination 的属性映射关系字典，用于集合资源的排序（视频P37）
+    /// </summary>
+    /// <typeparam name="TSource">源类型</typeparam>
+    /// <typeparam name="TDestination">目标类型</typeparam>
     public class PropertyMapping<TSource, TDestination> : IPropertyMapping
     {
-        //从 TSource 到 TDestination 的映射关系字典
+        /// <summary>
+        /// 属性映射关系字典
+        /// </summary>
         public Dictionary<string, PropertyMappingValue> MappingDictionary { get; private set; }
         public PropertyMapping(Dictionary<string, PropertyMappingValue> mappingDictionary)
         {

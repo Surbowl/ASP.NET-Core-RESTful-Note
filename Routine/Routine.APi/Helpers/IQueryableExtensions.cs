@@ -11,7 +11,15 @@ namespace Routine.APi.Helpers
     {
         //这是一个 IQueryable<T> 的拓展方法，接收排序字符串与属性映射字典，返回排序后的 IQueryable<T>
         //关于拓展方法，可以参考杨老师的另一个视频课程 https://www.bilibili.com/video/av62661924?p=5
-        //排序（视频P37）
+
+        /// <summary>
+        /// 对集合资源进行排序（视频P37）
+        /// </summary>
+        /// <typeparam name="T">资源类型</typeparam>
+        /// <param name="source">IQueryable 资源集合</param>
+        /// <param name="orderBy">Uri Query 中的 orderBy 字符串，用于声明资源集合的排序规则；如果无需排序传入 null 即可</param>
+        /// <param name="mappingDictionary">资源类型的映射关系字典</param>
+        /// <returns>排好序的 IQueryable 资源集合</returns>
         public static IQueryable<T> ApplySort<T>(this IQueryable<T> source,
                                                  string orderBy,
                                                  Dictionary<string, PropertyMappingValue> mappingDictionary)

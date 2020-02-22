@@ -4,7 +4,7 @@ using Routine.APi.Models;
 using System;
 
 /// <summary>
-/// AutoMapper 映射关系 配置文件（视频P12）
+/// AutoMapper 针对 Employee 的映射关系配置文件（视频P12）
 /// </summary>
 namespace Routine.APi.Profiles
 {
@@ -18,17 +18,15 @@ namespace Routine.APi.Profiles
                 .ForMember(dest => dest.Age, opt => opt.MapFrom(src => GetAge(src.DateOfBirth)));
 
             CreateMap<EmployeeAddDto, Employee>();
-
             CreateMap<EmployeeUpdateDto, Employee>();
-
             CreateMap<Employee, EmployeeUpdateDto>();
         }
 
         /// <summary>
         /// 获得年龄
         /// </summary>
-        /// <param name="dateOfBirth">出生日期</param>
-        /// <returns></returns>
+        /// <param name="dateOfBirth">出生时间</param>
+        /// <returns>年龄</returns>
         private int GetAge(DateTime dateOfBirth)
         {
             DateTime dateOfNow = DateTime.Now;

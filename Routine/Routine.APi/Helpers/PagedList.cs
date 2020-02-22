@@ -51,6 +51,13 @@ namespace Routine.APi.Helpers
             AddRange(items);
         }
 
+        /// <summary>
+        /// 对资源集合进行翻页处理（视频P35)
+        /// </summary>
+        /// <param name="source">待翻页的资源集合</param>
+        /// <param name="pageNumber">指定页码（当前页）</param>
+        /// <param name="pageSize">每页的资源数量</param>
+        /// <returns>翻页后，指定页码的资源集合</returns>
         public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source,int pageNumber,int pageSize)
         {
             //下面这种写法是错误的，会抛出异常。不能在前一个操作完成之前，在该上下文中启动第二个操作。
@@ -58,7 +65,7 @@ namespace Routine.APi.Helpers
             //var itemsTask = source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             //var count = await countTask;
             //var items = await itemsTask;
-
+            //
             //正确写法
             var count = await source.CountAsync();
             var items = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();

@@ -3,8 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Routine.APi.Models
 {
-    //输入使用的Dto
     //查询、插入、更新应该使用不同的Dto，便于业务升级与重构
+
+    /// <summary>
+    /// Create Company 时使用的 Dto，不含 BankruptTime 属性
+    /// </summary>
     public class CompanyAddDto
     {
         [Display(Name = "公司名")]

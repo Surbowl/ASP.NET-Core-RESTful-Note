@@ -93,7 +93,7 @@ namespace Routine.APi
                     };
                 });
 
-            //将 NewtonsoftJsonOutputFormatter 设为 application/vnd.company.hateoas+json 的输出格式化器（视频P43）
+            //全局设置输出格式化器（视频P43）
             services.Configure<MvcOptions>(options =>
             {
                 var newtonSoftJsonOutputFormatter = options
@@ -102,7 +102,12 @@ namespace Routine.APi
                                                     ?.FirstOrDefault();
                 if (newtonSoftJsonOutputFormatter != null)
                 {
+                    //将 NewtonsoftJsonOutputFormatter 设为 "application/vnd.company.hateoas+json" 等 Media type 的输出格式化器
                     newtonSoftJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.company.hateoas+json");
+                    newtonSoftJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.company.friendly+json");
+                    newtonSoftJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.company.friendly.hateoas+json");
+                    newtonSoftJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.company.full+json");
+                    newtonSoftJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.company.full.hateoas+json");
                 }
             });
 

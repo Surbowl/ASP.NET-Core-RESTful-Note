@@ -9,6 +9,9 @@ namespace Routine.APi.Models
     //因为该项目的 EmployeeAddDto 与 EmployeeUpdateDto 高度一致
     //因此使用这个抽象类，可以减少重复代码
 
+    /// <summary>
+    /// Create 或 Update Employee 时的 Dto 抽象类，不能直接使用
+    /// </summary>
     [EmployeeNoMustDifferentFromFirstNameAttribute(ErrorMessage = "员工号必须与名不同")] //作用于类
     public abstract class EmployeeAddOrUpdateDto : IValidatableObject
     {
