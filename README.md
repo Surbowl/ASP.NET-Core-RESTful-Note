@@ -18,7 +18,7 @@
 - [码云仓库（强制同步）](https://gitee.com/surbowl/ASP.NET-Core-RESTful-Note)
 
 ## 版本
-`master` 分支是最新的，截至目前涵盖视频 [P45](https://www.bilibili.com/video/av77957694?p=45) 的内容。
+`master` 分支是最新的，截至目前涵盖视频 [P44](https://www.bilibili.com/video/av77957694?p=44) 的内容。
 <br><br>
 在寻找更早的版本？欢迎查看本仓库的 [Releases](https://github.com/Surbowl/ASP.NET-Core-RESTful-Note/releases)，在课程的每个阶段都有 Release；
 <br>
