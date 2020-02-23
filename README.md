@@ -93,8 +93,8 @@
 - [配套博文](https://www.cnblogs.com/cgzl/p/11814971.html)
 - [ASP.NET Core 3.x 入门课程](https://www.bilibili.com/video/av65313713)
 - [How to unapply a migration](https://stackoverflow.com/questions/38192450/how-to-unapply-a-migration-in-asp-net-core-with-ef-core)
-
+- [码云仓库（强制同步）](https://gitee.com/surbowl/ASP.NET-Core-RESTful-Note)
 <br><br>
 欢迎大家对内容进行补充，只要是合理内容都可以 [pull](https://github.com/Surbowl/ASP.NET-Core-RESTful-Note/pulls)。
-<br><br><br>
+<br><br>
 非常感谢杨老师 🤗
