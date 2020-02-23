@@ -4,7 +4,9 @@
 
 本仓库是[杨旭](https://www.cnblogs.com/cgzl/)（solenovex）《[使用 ASP.NET Core 3.x 构建 RESTful Web API](https://www.bilibili.com/video/av77957694)》课程的学习笔记。
 <br><br>
-包含课程的项目代码，并注释随堂笔记与资料；与原课程略有不同，本项目使用 SQL Server 数据库。
+包含课程的项目代码，并注释随堂笔记与资料。
+<br><br>
+与原课程略有不同，本项目使用 SQL Server 数据库，并适当提高完成度，例如 CompaniesController 所有方法均支持 Vendor-specific Media Types，详见项目内注释。
 
 ## 版本
 `master` 分支是最新的，涵盖所有课程内容。
