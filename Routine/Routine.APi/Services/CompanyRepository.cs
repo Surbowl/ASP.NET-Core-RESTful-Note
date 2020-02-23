@@ -107,20 +107,20 @@ namespace Routine.APi.Services
 
             var queryExpression = _context.Companies as IQueryable<Company>;
             //查找指定公司
-            if (!string.IsNullOrWhiteSpace(parameters.companyName))
+            if (! string.IsNullOrWhiteSpace(parameters.companyName))
             {
                 parameters.companyName = parameters.companyName.Trim();
                 queryExpression = queryExpression.Where(x => x.Name == parameters.companyName);
             }
             //模糊搜索
-            if (!string.IsNullOrWhiteSpace(parameters.SearchTerm))
+            if (! string.IsNullOrWhiteSpace(parameters.SearchTerm))
             {
                 parameters.SearchTerm = parameters.SearchTerm.Trim();
                 queryExpression = queryExpression.Where(x => x.Name.Contains(parameters.SearchTerm)
                                                              || x.Introduction.Contains(parameters.SearchTerm));
             }
             //排序（视频P38）
-            if (!string.IsNullOrWhiteSpace(parameters.OrderBy))
+            if (! string.IsNullOrWhiteSpace(parameters.OrderBy))
             {
                 //取得属性映射关系字典
                 var mappingDictionary = _propertyMappingService.GetPropertyMapping<CompanyFullDto, Company>();
@@ -177,14 +177,14 @@ namespace Routine.APi.Services
             var queryExpression = _context.Employees.Where(x => x.CompanyId == companyId);
 
             //性别筛选
-            if (!string.IsNullOrWhiteSpace(parameters.Gender))
+            if (! string.IsNullOrWhiteSpace(parameters.GenderDisplay))
             {
-                parameters.Gender = parameters.Gender.Trim();
-                var gender = Enum.Parse<Gender>(parameters.Gender);
+                parameters.GenderDisplay = parameters.GenderDisplay.Trim();
+                var gender = Enum.Parse<Gender>(parameters.GenderDisplay);
                 queryExpression = queryExpression.Where(x => x.Gender == gender);
             }
             //查询
-            if (!string.IsNullOrWhiteSpace(parameters.Q))
+            if (! string.IsNullOrWhiteSpace(parameters.Q))
             {
                 parameters.Q = parameters.Q.Trim();
                 queryExpression = queryExpression.Where(x => x.EmployeeNo.Contains(parameters.Q)

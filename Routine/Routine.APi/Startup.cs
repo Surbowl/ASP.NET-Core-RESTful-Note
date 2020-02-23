@@ -28,8 +28,19 @@ namespace Routine.APi
         // 注册服务 This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //添加缓存（视频P46）
+            //添加缓存服务（视频P46）
             services.AddResponseCaching();
+
+            //支持高级 CacheHeaders，并进行全局配置（视频P48）
+            services.AddHttpCacheHeaders(expires =>
+            {
+                expires.MaxAge = 60;
+                expires.CacheLocation = Marvin.Cache.Headers.CacheLocation.Private;
+            }, validation =>
+            {
+                //如果响应过期，必须重新验证
+                validation.MustRevalidate = true;
+            });
 
             /*
             * 内容协商：
@@ -47,7 +58,7 @@ namespace Routine.APi
              * - 可以识别问题属于哪个 API
              */
 
-            //以下是一种添加序列化工具的过时写法，在本项目中不再使用（视频P8）
+            //以下是一种添加序列化工具的写法，在本项目中未采用（视频P8）
             //services.AddControllers(options =>
             //{
             //    //OutputFormatters 默认有且只有 Json 格式
@@ -64,10 +75,10 @@ namespace Routine.APi
                 options.ReturnHttpNotAcceptable = true;
 
                 //配置缓存字典（视频P46）
-                options.CacheProfiles.Add("120sCacheProfile", new CacheProfile
-                {
-                    Duration = 120
-                });
+                //options.CacheProfiles.Add("120sCacheProfile", new CacheProfile
+                //{
+                //    Duration = 120
+                //});
             })
                 //默认格式取决于序列化工具的添加顺序
                 .AddNewtonsoftJson(options =>  //第三方 JSON 序列化和反序列化工具（会替换掉原本默认的 JSON 序列化工具）（视频P32）
@@ -77,7 +88,7 @@ namespace Routine.APi
                 .AddXmlDataContractSerializerFormatters() //XML 序列化和反序列化工具（视频P8）
                 .ConfigureApiBehaviorOptions(options =>   //自定义错误报告（视频P29）
                 {
-                    //IsValid = false 时会执行
+                    //创建一个委托 context，在 IsValid == false 时执行
                     options.InvalidModelStateResponseFactory = context =>
                     {
                         var problemDetails = new ValidationProblemDetails(context.ModelState)
@@ -96,11 +107,10 @@ namespace Routine.APi
                     };
                 });
 
-            //全局设置输出格式化器（视频P43）
             services.Configure<MvcOptions>(options =>
             {
-                var newtonSoftJsonOutputFormatter = options
-                                                    .OutputFormatters
+                //全局设置 NewtonsoftJsonOutputFormatter（视频P43）
+                var newtonSoftJsonOutputFormatter = options.OutputFormatters
                                                     .OfType<NewtonsoftJsonOutputFormatter>()
                                                     ?.FirstOrDefault();
                 if (newtonSoftJsonOutputFormatter != null)
@@ -126,13 +136,13 @@ namespace Routine.APi
             });
 
             //轻量服务可以使用 Transient
-            //注册排序使用的属性映射服务（视频P37）
+            //排序使用的属性映射服务（视频P37）
             services.AddTransient<IPropertyMappingService, PropertyMappingService>();
             //判断 Uri query 字符串中的 fields 是否合法（视频P39）
             services.AddTransient<IPropertyCheckerService, PropertyCheckerService>();
         }
 
-        // 路由中间件 This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        //路由中间件 This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             //添加中间件的顺序非常重要，如果你把授权中间件放在了Controller的后边，
@@ -155,8 +165,9 @@ namespace Routine.APi
                 });
             }
 
-            //缓存中间件（视频P46）
-            app.UseResponseCaching();
+            //缓存中间件
+            //app.UseResponseCaching();  //（视频P46）
+            app.UseHttpCacheHeaders(); //（视频P48）
 
             app.UseRouting();
 

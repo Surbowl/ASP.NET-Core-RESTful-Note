@@ -9,7 +9,6 @@ using Routine.APi.Models;
 using Routine.APi.Services;
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -79,7 +78,7 @@ using System.Threading.Tasks;
  */
 
 namespace Routine.APi.Controllers
-{   
+{
     /*[ApiController] 属性并不是强制要求的，但是它会使开发体验更好
      * 它会启用以下行为：
      * 1.要求使用属性路由（Attribute Routing）
@@ -114,7 +113,7 @@ namespace Routine.APi.Controllers
         [HttpGet(Name = nameof(GetCompanies))]
         [HttpHead] //添加对 Http Head 的支持，Head 请求只会返回 Header 信息，没有 Body（视频P16）
         public async Task<IActionResult> GetCompanies([FromQuery]CompanyDtoParameters parameters,
-                                                      [FromHeader(Name="Accept")]  //mediaType 从 Header 获取
+                                                      [FromHeader(Name="Accept")]
                                                       string acceptMediaType)
         {
             //尝试解析 MediaTypeHeaderValue（视频P43）
@@ -126,21 +125,21 @@ namespace Routine.APi.Controllers
 
             //判断 Uri Query 中的 orderby 字符串是否合法（视频P38）
             //无论请求的是 Full Dto 还是 Friendly Dto，都允许按照 Full Dto 中的属性进行排序
-            if (! _propertyMappingService.ValidMappingExistsFor<CompanyFullDto, Company>(parameters.OrderBy))
+            if (!_propertyMappingService.ValidMappingExistsFor<CompanyFullDto, Company>(parameters.OrderBy))
             {
                 return BadRequest();  //返回状态码400
             }
 
             //判断 Uri Query 中的 fields 字符串是否合法（视频P39）
-            if (! _propertyCheckerService.TypeHasProperties<CompanyFriendlyDto>(parameters.Fields))
+            if (!_propertyCheckerService.TypeHasProperties<CompanyFriendlyDto>(parameters.Fields))
             {
                 return BadRequest();
             }
 
             //GetCompaniesAsync(parameters) 返回的是经过翻页处理的 PagedList<T>（视频P35）
             var companies = await _companyRepository.GetCompaniesAsync(parameters);
-            //向 Headers 中添加翻页信息
-            var paginationMetdata = new
+            
+            var paginationMetdata = new //向 Headers 中添加的翻页信息
             {
                 totalCount = companies.TotalCount,
                 pageSize = companies.PageSize,
@@ -151,15 +150,13 @@ namespace Routine.APi.Controllers
                                                                           new JsonSerializerOptions
                                                                           {   //为了防止 URI 中的‘&’、‘？’符号被转义，使用“不安全”的 Encoder
                                                                               Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-                                                                          }));           
+                                                                          }));
             //是否需要 Full Dto（视频P43）
-            bool isFull = parsedAcceptMediaType
-                         .SubTypeWithoutSuffix
+            bool isFull = parsedAcceptMediaType.SubTypeWithoutSuffix
                          .ToString()
                          .Contains("full", StringComparison.InvariantCultureIgnoreCase);
             //是否需要 links（HATEOAS）（视频P41-43）
-            bool includeLinks = parsedAcceptMediaType
-                               .SubTypeWithoutSuffix
+            bool includeLinks = parsedAcceptMediaType.SubTypeWithoutSuffix
                                .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase); //大小写不敏感
 
             var shapedData = isFull ?
@@ -178,7 +175,6 @@ namespace Routine.APi.Controllers
                     companyDict.Add("links", links);
                     return companyDict;
                 });
-
                 //然后创建整个 Companies 集合的 Links
                 var linkedCollectionResource = new
                 {
@@ -188,7 +184,7 @@ namespace Routine.APi.Controllers
                 return Ok(linkedCollectionResource);  //返回状态码200
             }
 
-            //不使用 HATEOAS，只返回 value
+            //不使用 HATEOAS，直接返回 shapedData
             return Ok(shapedData);
         }
 
@@ -204,19 +200,19 @@ namespace Routine.APi.Controllers
         //                             "application/vnd.company.full.hateoas+json")]
         public async Task<IActionResult> GetCompany(Guid companyId,
                                                     string fields,
-                                                    [FromHeader(Name="Accept")]  //mediaType 从 Header 获取
+                                                    [FromHeader(Name="Accept")]
                                                     string acceptMediaType)
         {
             //判断 Uri Query 中的 fields 字符串是否合法（视频P39）
-            if (! _propertyCheckerService.TypeHasProperties<CompanyFriendlyDto>(fields))
+            if (!_propertyCheckerService.TypeHasProperties<CompanyFriendlyDto>(fields))
             {
                 return BadRequest();  //返回状态码400
             }
 
             //尝试解析 MediaTypeHeaderValue（视频P43）
-            if (! MediaTypeHeaderValue.TryParse(acceptMediaType, out MediaTypeHeaderValue parsedAcceptMediaType))
+            if (!MediaTypeHeaderValue.TryParse(acceptMediaType, out MediaTypeHeaderValue parsedAcceptMediaType))
             {
-                return BadRequest();  //返回状态码400
+                return BadRequest();
             }
 
             var company = await _companyRepository.GetCompanyAsync(companyId);
@@ -226,12 +222,10 @@ namespace Routine.APi.Controllers
             }
 
             //是否需要 links（HATEOAS）（视频P41-43）
-            bool includeLinks = parsedAcceptMediaType
-                               .SubTypeWithoutSuffix
+            bool includeLinks = parsedAcceptMediaType.SubTypeWithoutSuffix
                                .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase); //大小写不敏感
             //是否需要 Full Dto
-            bool isFull = parsedAcceptMediaType
-                         .SubTypeWithoutSuffix
+            bool isFull = parsedAcceptMediaType.SubTypeWithoutSuffix
                          .ToString()
                          .Contains("full", StringComparison.InvariantCultureIgnoreCase);
 
@@ -260,7 +254,7 @@ namespace Routine.APi.Controllers
                                                       "application/json",
                                                       "application/vnd.company.companyforcreation+json")]
         //指明该方法可以消费哪些格式的 Content-Type（视频P44）
-        [Consumes("application/json","application/vnd.company.companyforcreation+json")]
+        [Consumes("application/json", "application/vnd.company.companyforcreation+json")]
         public async Task<IActionResult> CreateCompany([FromBody]CompanyAddDto company,
                                                        [FromHeader(Name="Accept")]
                                                        string acceptMediaType)
@@ -272,18 +266,16 @@ namespace Routine.APi.Controllers
             //if (company == null) { return BadRequest(); }
 
             //尝试解析 MediaTypeHeaderValue（视频P43）
-            if (! MediaTypeHeaderValue.TryParse(acceptMediaType, out MediaTypeHeaderValue parsedAcceptMediaType))
+            if (!MediaTypeHeaderValue.TryParse(acceptMediaType, out MediaTypeHeaderValue parsedAcceptMediaType))
             {
-                return BadRequest();  //返回状态码400
+                return BadRequest();
             }
 
             //是否需要 links（HATEOAS）（视频P41-43）
-            bool includeLinks = parsedAcceptMediaType
-                               .SubTypeWithoutSuffix
+            bool includeLinks = parsedAcceptMediaType.SubTypeWithoutSuffix
                                .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase); //大小写不敏感
             //是否需要 Full Dto
-            bool isFull = parsedAcceptMediaType
-                         .SubTypeWithoutSuffix
+            bool isFull = parsedAcceptMediaType.SubTypeWithoutSuffix
                          .ToString()
                          .Contains("full", StringComparison.InvariantCultureIgnoreCase);
 
@@ -309,35 +301,39 @@ namespace Routine.APi.Controllers
             return CreatedAtRoute(nameof(GetCompany), new { companyId = entity.Id }, shapedData);
         }
 
-        //含 KankruptTime 的 Create Company Api（视频P44）
-        //传入 CompanyAddWithBankruptTimeDto
+        //含 KankruptTime 的 Create Company，使用 CompanyAddWithBankruptTimeDto（视频P44）
         [HttpPost(Name = nameof(CreateCompanyWithBankruptTime))]
         [RequestHeaderMatchesMediaType("Content-Type", //当 Content-Type 是以下 value 时，使用该方法（相当于路由）（视频P44）
                                                       "application/vnd.company.companyforcreationwithbankrupttime+json")]
         //指明该方法可以消费哪些格式的 Content-Type（视频P44）
         [Consumes("application/vnd.company.companyforcreationwithbankrupttime+json")]
-        public async Task<IActionResult> CreateCompanyWithBankruptTime([FromBody]CompanyAddWithBankruptTimeDto company,
+        public async Task<IActionResult> CreateCompanyWithBankruptTime([FromBody]CompanyAddWithBankruptTimeDto companyWithBankruptTime,
                                                                        [FromHeader(Name="Accept")]
                                                                        string acceptMediaType)
         {
+            //尝试解析 MediaTypeHeaderValue（视频P43）
             if (!MediaTypeHeaderValue.TryParse(acceptMediaType, out MediaTypeHeaderValue parsedAcceptMediaType))
             {
                 return BadRequest();
             }
-            bool includeLinks = parsedAcceptMediaType
-                               .SubTypeWithoutSuffix
-                               .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase);
-            bool isFull = parsedAcceptMediaType
-                         .SubTypeWithoutSuffix
+
+            //是否需要 links（HATEOAS）（视频P41-43）
+            bool includeLinks = parsedAcceptMediaType.SubTypeWithoutSuffix
+                               .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase); //大小写不敏感
+            //是否需要 Full Dto
+            bool isFull = parsedAcceptMediaType.SubTypeWithoutSuffix
                          .ToString()
                          .Contains("full", StringComparison.InvariantCultureIgnoreCase);
-            var entity = _mapper.Map<Company>(company);
+
+            var entity = _mapper.Map<Company>(companyWithBankruptTime);
             _companyRepository.AddCompany(entity);
             await _companyRepository.SaveAsync();
+
             var shapedData = isFull ?
                              _mapper.Map<CompanyFullDto>(entity).ShapeData(null)
                              :
                              _mapper.Map<CompanyFriendlyDto>(entity).ShapeData(null);
+
             if (includeLinks)
             {
                 var companyDict = shapedData as IDictionary<string, object>;
@@ -345,6 +341,7 @@ namespace Routine.APi.Controllers
                 companyDict.Add("links", links);
                 return CreatedAtRoute(nameof(GetCompany), new { companyId = entity.Id }, companyDict);
             }
+
             return CreatedAtRoute(nameof(GetCompany), new { companyId = entity.Id }, shapedData);
         }
 
@@ -361,7 +358,7 @@ namespace Routine.APi.Controllers
                 return NotFound();
             }
             //删除 Company 时将属于它的 Employees 一并删除
-            //把 Employees 加载到内存中，使删除时可以追踪 ？？？（视频P33）
+            //该代码把属于 Company 的 Employees 加载到内存中，使删除时可以追踪（视频P33）
             await _companyRepository.GetEmployeesAsync(companyId, new EmployeeDtoParameters());
 
             _companyRepository.DeleteCompany(companyEntity);

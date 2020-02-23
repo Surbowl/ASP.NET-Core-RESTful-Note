@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -16,7 +17,7 @@ namespace Routine.APi.Controllers
 {
     [ApiController]
     [Route("api/companies/{companyId}/employees")]
-    [ResponseCache(CacheProfileName = "120sCacheProfile")]  //允许被缓存120秒（视频P46）
+    //[ResponseCache(CacheProfileName = "120sCacheProfile")]  //允许被缓存120秒（视频P46）
     public class EmployeesController : ControllerBase
     {
         private readonly ICompanyRepository _companyRepository;
@@ -34,12 +35,15 @@ namespace Routine.APi.Controllers
         #region HttpGet
 
         [HttpGet(Name = nameof(GetEmployeesForCompany))]
-        [ResponseCache(Duration = 60)] //专门指定这个方法允许被缓存60秒（视频P46）
+        //单独指定这个方法的缓存策略
+        //[ResponseCache(Duration = 60)]                                           //（视频P46）
+        [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 1800)] //（视频P48）
+        [HttpCacheValidation(MustRevalidate = false)]                              //（视频P48）
         public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,
                                                                 [FromQuery]EmployeeDtoParameters parameters)
         {
             //判断 Uri Query 中的 orderBy 字符串是否合法（视频P38）
-            if (!_propertyMappingService.ValidMappingExistsFor<EmployeeDto, Employee>(parameters.OrderBy))
+            if (! _propertyMappingService.ValidMappingExistsFor<EmployeeDto, Employee>(parameters.OrderBy))
             {
                 return BadRequest();  //返回状态码400
             }
