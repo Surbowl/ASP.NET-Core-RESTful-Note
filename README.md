@@ -6,7 +6,7 @@
 <br><br>
 包含课程的项目代码，并注释随堂笔记与资料。
 <br><br>
-与原课程略有不同，本项目使用 SQL Server 数据库，并适当提高完成度，例如 CompaniesController 所有方法均支持 Vendor-specific Media Types，详见项目内注释。
+与原课程略有不同，本项目使用 SQL Server 数据库，并适当提高完成度，例如 CompaniesController 所有方法均支持 Vendor-specific Media Types，允许 Orderby BankruptTime 等，详见项目内注释。
 
 ## 版本
 `master` 分支是最新的，涵盖所有课程内容。
