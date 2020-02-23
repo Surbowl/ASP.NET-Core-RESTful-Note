@@ -5,7 +5,7 @@ namespace Routine.APi.Services
     public class PropertyCheckerService : IPropertyCheckerService
     {
         /// <summary>
-        /// 判断 Uri Query 中的 fields 字符串是否合法（视频P39）
+        /// 判断 Uri query parameters 中的 fields 是否合法（视频P39）
         /// </summary>
         /// <typeparam name="T">待返回的资源类型</typeparam>
         /// <param name="fields">Uri Query 中的 fields 字符串，大小写不敏感，允许为 null</param>

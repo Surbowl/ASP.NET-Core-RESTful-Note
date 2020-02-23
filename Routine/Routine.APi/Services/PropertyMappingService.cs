@@ -85,7 +85,7 @@ namespace Routine.APi.Services
         }
 
         /// <summary>
-        /// 判断 Uri Query 中的 orderBy 字符串是否合法（视频P38）
+        /// 判断 Uri query parameters 中的 orderBy 是否合法（视频P38）
         /// </summary>
         /// <typeparam name="TSource">源类型</typeparam>
         /// <typeparam name="TDestination">目标类型</typeparam>
