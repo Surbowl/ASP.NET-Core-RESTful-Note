@@ -132,7 +132,7 @@ namespace Routine.APi.Controllers
             }
 
             //判断 Uri Query 中的 fields 字符串是否合法（视频P39）
-            if (! _propertyCheckerService.TypeHasProperties<CompanyDto>(parameters.Fields))
+            if (! _propertyCheckerService.TypeHasProperties<CompanyFriendlyDto>(parameters.Fields))
             {
                 return BadRequest();
             }
@@ -160,12 +160,12 @@ namespace Routine.APi.Controllers
             //是否需要 links（HATEOAS）（视频P41-43）
             bool includeLinks = parsedAcceptMediaType
                                .SubTypeWithoutSuffix
-                               .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase); //忽略大小写
+                               .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase); //大小写不敏感
 
             var shapedData = isFull ?
                            _mapper.Map<IEnumerable<CompanyFullDto>>(companies).ShapeData(parameters.Fields)
                            :
-                           _mapper.Map<IEnumerable<CompanyDto>>(companies).ShapeData(parameters.Fields);
+                           _mapper.Map<IEnumerable<CompanyFriendlyDto>>(companies).ShapeData(parameters.Fields);
 
             //使用 HATEOAS，返回 value 与 links （视频P43）
             if (includeLinks)
@@ -208,7 +208,7 @@ namespace Routine.APi.Controllers
                                                     string acceptMediaType)
         {
             //判断 Uri Query 中的 fields 字符串是否合法（视频P39）
-            if (! _propertyCheckerService.TypeHasProperties<CompanyDto>(fields))
+            if (! _propertyCheckerService.TypeHasProperties<CompanyFriendlyDto>(fields))
             {
                 return BadRequest();  //返回状态码400
             }
@@ -228,7 +228,7 @@ namespace Routine.APi.Controllers
             //是否需要 links（HATEOAS）（视频P41-43）
             bool includeLinks = parsedAcceptMediaType
                                .SubTypeWithoutSuffix
-                               .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase); //忽略大小写
+                               .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase); //大小写不敏感
             //是否需要 Full Dto
             bool isFull = parsedAcceptMediaType
                          .SubTypeWithoutSuffix
@@ -238,7 +238,7 @@ namespace Routine.APi.Controllers
             var shapedData = isFull ?
                          _mapper.Map<CompanyFullDto>(company).ShapeData(fields)
                          :
-                         _mapper.Map<CompanyDto>(company).ShapeData(fields);
+                         _mapper.Map<CompanyFriendlyDto>(company).ShapeData(fields);
 
             if (includeLinks)
             {
@@ -280,7 +280,7 @@ namespace Routine.APi.Controllers
             //是否需要 links（HATEOAS）（视频P41-43）
             bool includeLinks = parsedAcceptMediaType
                                .SubTypeWithoutSuffix
-                               .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase); //忽略大小写
+                               .EndsWith("hateoas", StringComparison.InvariantCultureIgnoreCase); //大小写不敏感
             //是否需要 Full Dto
             bool isFull = parsedAcceptMediaType
                          .SubTypeWithoutSuffix
@@ -294,7 +294,7 @@ namespace Routine.APi.Controllers
             var shapedData = isFull ?
                              _mapper.Map<CompanyFullDto>(entity).ShapeData(null)
                              :
-                             _mapper.Map<CompanyDto>(entity).ShapeData(null);
+                             _mapper.Map<CompanyFriendlyDto>(entity).ShapeData(null);
 
             if (includeLinks)
             {
@@ -337,7 +337,7 @@ namespace Routine.APi.Controllers
             var shapedData = isFull ?
                              _mapper.Map<CompanyFullDto>(entity).ShapeData(null)
                              :
-                             _mapper.Map<CompanyDto>(entity).ShapeData(null);
+                             _mapper.Map<CompanyFriendlyDto>(entity).ShapeData(null);
             if (includeLinks)
             {
                 var companyDict = shapedData as IDictionary<string, object>;

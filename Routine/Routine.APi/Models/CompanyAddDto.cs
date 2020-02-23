@@ -34,8 +34,7 @@ namespace Routine.APi.Models
         //[MinLength(10, ErrorMessage = "{0}的长度至少{1}位")]
         public string Introduction { get; set; }
 
-        //这种写法可以避免空引用异常
-        public ICollection<EmployeeAddDto> Employees { get; set; } = new List<EmployeeAddDto>();
+        public ICollection<EmployeeAddDto> Employees { get; set; } = new List<EmployeeAddDto>(); //这种写法可以避免空引用异常
     }
 }
 

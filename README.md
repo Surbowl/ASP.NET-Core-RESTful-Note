@@ -11,11 +11,11 @@
 ## 小地图
 - [视频课程](https://www.bilibili.com/video/av77957694)
 - [配套博文](https://www.cnblogs.com/cgzl/p/11814971.html)
-- [原版项目仓库](https://github.com/solenovex/ASP.NET-Core-3.x-REST-API-Tutorial-Code)
+- [solenovex 原版仓库](https://github.com/solenovex/ASP.NET-Core-3.x-REST-API-Tutorial-Code)
 - [ASP.NET Core 3.x 入门课程](https://www.bilibili.com/video/av65313713)
 - [How to unapply a migration](https://stackoverflow.com/questions/38192450/how-to-unapply-a-migration-in-asp-net-core-with-ef-core)
-- [GitHub 仓库](https://github.com/Surbowl/ASP.NET-Core-RESTful-Note)
-- [码云仓库（强制同步）](https://gitee.com/surbowl/ASP.NET-Core-RESTful-Note)
+- [本仓库-GitHub](https://github.com/Surbowl/ASP.NET-Core-RESTful-Note)
+- [本仓库-码云（强制同步）](https://gitee.com/surbowl/ASP.NET-Core-RESTful-Note)
 
 ## 版本
 `master` 分支是最新的，截至目前涵盖视频 [P46](https://www.bilibili.com/video/av77957694?p=46) 的内容。

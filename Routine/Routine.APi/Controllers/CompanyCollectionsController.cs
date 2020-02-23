@@ -66,7 +66,7 @@ namespace Routine.APi.Controllers
                 _companyRepository.AddCompany(company);
             }
             await _companyRepository.SaveAsync();
-            var dtosToReturn = _mapper.Map<IEnumerable<CompanyDto>>(companyEntities);
+            var dtosToReturn = _mapper.Map<IEnumerable<CompanyFriendlyDto>>(companyEntities);
             var idsString = string.Join(",", dtosToReturn.Select(x => x.Id));
             return CreatedAtRoute(nameof(GetCompanyCollection), new { ids = idsString }, dtosToReturn);
         }

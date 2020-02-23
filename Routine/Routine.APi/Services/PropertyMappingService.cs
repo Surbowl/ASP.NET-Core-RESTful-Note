@@ -61,7 +61,7 @@ namespace Routine.APi.Services
         {
             //向列表中添加属性映射关系字典，同时指明该字典对应的源类型与目标类型
             //即向列表中添加“指明 TSource 与 TDestination 的属性映射关系字典”
-            //_propertyMappings.Add(new PropertyMapping<CompanyDto, Company>(_companyPropertyMapping));
+            //_propertyMappings.Add(new PropertyMapping<CompanyFriendlyDto, Company>(_companyPropertyMapping));
             _propertyMappings.Add(new PropertyMapping<CompanyFullDto, Company>(_companyFullPropertyMapping));
             _propertyMappings.Add(new PropertyMapping<EmployeeDto, Employee>(_employeeDtoPropertyMapping));
         }

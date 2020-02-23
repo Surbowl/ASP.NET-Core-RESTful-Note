@@ -35,12 +35,13 @@ namespace Routine.APi.Models
         public DateTime DateOfBirth { get; set; }
 
         /// <summary>
-        /// 自定义验证规则
+        /// 通过实现 IValidatableObject 接口，自定义验证规则（视频P27）
         /// </summary>
         /// <param name="validationContext"></param>
         /// <returns></returns>
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+            //FirstName 与 FirstName 不能相同
             if (FirstName == LastName)
             {
                 //错误信息与引起错误的位置

@@ -15,7 +15,7 @@ namespace Routine.APi.Profiles
             //AutoMapper 基于约定
             //属性名称一致时自动赋值
             //自动忽略空引用
-            CreateMap<Company, CompanyDto>();
+            CreateMap<Company, CompanyFriendlyDto>();
             CreateMap<Company, CompanyFullDto>();
             CreateMap<CompanyAddDto, Company>();
             CreateMap<CompanyAddWithBankruptTimeDto, Company>();

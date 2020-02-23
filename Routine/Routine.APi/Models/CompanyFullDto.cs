@@ -2,6 +2,8 @@
 
 namespace Routine.APi.Models
 {
+    //从视频P43 Vendor-specific Media Types 开始，CompanyDto 分为 CompanyFriendlyDto 与 CompanyFullDto
+
     /// <summary>
     /// 输出 Company 使用的 Full Dto，包含 Company 的所有属性/字段（视频P43）
     /// </summary>
