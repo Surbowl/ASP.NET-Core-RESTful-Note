@@ -6,7 +6,7 @@
 <br><br>
 包含课程的项目代码，并注释随堂笔记与资料。
 <br><br>
-与原项目略有不同，本项目使用 SQL Server 数据库，并适当提高完成度，例如 CompaniesController 所有方法均支持 Vendor-specific Media Types，允许 Orderby BankruptTime 等，详见项目内注释。
+与原项目略有不同，本项目使用 SQL Server 数据库。
 
 ## 版本
 `master` 分支是最新的，涵盖所有课程内容。
@@ -45,9 +45,9 @@
 │      
 ├─Helpers
 │      ArrayModelBinder.cs                 // 自定义 ModelBinder，将 ids 字符串转为 IEnumerable<Guid>
-│      IEnumerableExtensions.cs            // IEnumerable<T> 拓展方法，对集合资源进行数据塑形
-│      IQueryableExtensions.cs             // IQueryable<T> 拓展方法，对集合资源进行排序
-│      ObjectExtensions.cs                 // Object 拓展方法，对单个资源进行数据塑形
+│      IEnumerableExtensions.cs            // IEnumerable<T> 拓展，对集合资源进行数据塑形
+│      IQueryableExtensions.cs             // IQueryable<T> 拓展，对集合资源进行排序
+│      ObjectExtensions.cs                 // Object 拓展，对单个资源进行数据塑形
 │      PagedList.cs                        // 继承 List<T>，对集合资源进行翻页处理
 │      ResourceUriType.cs                  // 枚举，指明 Uri 前往上一页、下一页或本页
 │      
@@ -78,10 +78,10 @@
 │      IPropertyMapping.cs
 │      IPropertyMappingService.cs
 │      CompanyRepository.cs
-│      PropertyCheckerService.cs           // 判断 Uri query parameters 中的 fields 是否合法的服务
+│      PropertyCheckerService.cs           // 判断 Uri query parameters 中的 fields 是否合法
 │      PropertyMappingValue.cs             // 属性映射关系，用于集合资源的排序
-│      PropertyMapping.cs                  // 声明源类型与目标类型的属性映射关系字典，用于集合资源的排序
-│      PropertyMappingService.cs           // 对集合资源进行排序的服务
+│      PropertyMapping.cs                  // 属性映射关系字典，声明源类型与目标类型，用于集合资源的排序
+│      PropertyMappingService.cs           // 属性映射关系服务，用于集合资源的排序
 │      
 └─ValidationAttributes                     //自定义 Model 验证 Attribute
         EmployeeNoMustDifferentFromFirstNameAttribute.cs  
