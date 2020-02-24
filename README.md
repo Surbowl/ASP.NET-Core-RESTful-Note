@@ -18,6 +18,7 @@
 杨老师已在 GitHub 发布课程原版代码，[点此访问](https://github.com/solenovex/ASP.NET-Core-3.x-REST-API-Tutorial-Code)。
 
 ## PATH
+[Routine.APi](https://github.com/Surbowl/ASP.NET-Core-RESTful-Note/tree/master/Routine/Routine.APi)
 ```
 │  appsettings.Development.json
 │  appsettings.json
