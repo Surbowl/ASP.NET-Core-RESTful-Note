@@ -25,7 +25,7 @@
 │  Program.cs
 │  Routine.APi.csproj
 │  Startup.cs
-|
+│
 ├─Controllers
 │      RootController.cs                   // api                                  根目录
 │      CompaniesController.cs              // api/companies                        公司（单个/集合）
@@ -65,7 +65,7 @@
 │      EmployeeAddDto.cs                   // 添加员工时使用的 Dto，继承 EmployeeAddOrUpdateDto
 │      EmployeeUpdateDto.cs                // 更新员工信息时使用的 Dto，继承 EmployeeAddOrUpdateDto
 │      LinkDto.cs                          // HATEOAS 的 links 使用的 Dto
-|     
+│     
 ├─Profiles                                 // AutoMapper 映射关系
 │      CompanyProfile.cs
 │      EmployeeProfile.cs
