@@ -17,6 +17,14 @@
 <br><br>
 杨老师已在 GitHub 发布课程原版代码，[点此访问](https://github.com/solenovex/ASP.NET-Core-3.x-REST-API-Tutorial-Code)。
 
+## 小地图
+- [课程视频](https://www.bilibili.com/video/av77957694)
+- [课程博文](https://www.cnblogs.com/cgzl/p/11814971.html)
+- [课程PPT](https://github.com/solenovex/ASP.NET-Core-3.x-REST-API-Tutorial-Code/tree/master/PPT)
+- [ASP.NET Core 3.x 入门课程](https://www.bilibili.com/video/av65313713)
+- [How to unapply a migration](https://stackoverflow.com/questions/38192450/how-to-unapply-a-migration-in-asp-net-core-with-ef-core)
+- [码云仓库（强制同步）](https://gitee.com/surbowl/ASP.NET-Core-RESTful-Note)
+
 ## PATH
 [Routine.APi](https://github.com/Surbowl/ASP.NET-Core-RESTful-Note/tree/master/Routine/Routine.APi)
 ```
@@ -89,13 +97,6 @@
         
 ```
 
-## 小地图
-- [课程视频](https://www.bilibili.com/video/av77957694)
-- [课程博文](https://www.cnblogs.com/cgzl/p/11814971.html)
-- [课程PPT](https://github.com/solenovex/ASP.NET-Core-3.x-REST-API-Tutorial-Code/tree/master/PPT)
-- [ASP.NET Core 3.x 入门课程](https://www.bilibili.com/video/av65313713)
-- [How to unapply a migration](https://stackoverflow.com/questions/38192450/how-to-unapply-a-migration-in-asp-net-core-with-ef-core)
-- [码云仓库（强制同步）](https://gitee.com/surbowl/ASP.NET-Core-RESTful-Note)
 <br><br>
 欢迎大家对内容进行补充，只要是合理内容都可以 [pull](https://github.com/Surbowl/ASP.NET-Core-RESTful-Note/pulls)。
 <br><br>
