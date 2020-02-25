@@ -92,7 +92,7 @@
 │      PropertyMapping.cs                  // 属性映射关系字典，声明源类型与目标类型，用于集合资源的排序
 │      PropertyMappingService.cs           // 属性映射关系服务，用于集合资源的排序
 │      
-└─ValidationAttributes                     //自定义 Model 验证 Attribute
+└─ValidationAttributes                     // 自定义 Model 验证 Attribute
         EmployeeNoMustDifferentFromFirstNameAttribute.cs  
         
 ```
