@@ -25,78 +25,78 @@ namespace Routine.APi
 
         public IConfiguration Configuration { get; }
 
-        // ×¢²á·şÎñ This method gets called by the runtime. Use this method to add services to the container.
+        // æ³¨å†ŒæœåŠ¡ This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //Ìí¼Ó»º´æ·şÎñ£¨ÊÓÆµP46£©
+            //æ·»åŠ ç¼“å­˜æœåŠ¡ï¼ˆè§†é¢‘P46ï¼‰
             services.AddResponseCaching();
 
-            //Ö§³Ö¸ß¼¶ CacheHeaders£¬²¢½øĞĞÈ«¾ÖÅäÖÃ£¨ÊÓÆµP48£©
+            //æ”¯æŒé«˜çº§ CacheHeadersï¼Œå¹¶è¿›è¡Œå…¨å±€é…ç½®ï¼ˆè§†é¢‘P48ï¼‰
             services.AddHttpCacheHeaders(expires =>
             {
                 expires.MaxAge = 60;
                 expires.CacheLocation = Marvin.Cache.Headers.CacheLocation.Private;
             }, validation =>
             {
-                //Èç¹ûÏìÓ¦¹ıÆÚ£¬±ØĞëÖØĞÂÑéÖ¤
+                //å¦‚æœå“åº”è¿‡æœŸï¼Œå¿…é¡»é‡æ–°éªŒè¯
                 validation.MustRevalidate = true;
             });
 
             /*
-            * ÄÚÈİĞ­ÉÌ£º
-            * Õë¶ÔÒ»¸öÏìÓ¦£¬µ±ÓĞ¶àÖÖ±íÊö¸ñÊ½µÄÊ±ºò£¬Ñ¡È¡×î¼ÑµÄÒ»¸ö±íÊö£¬ÀıÈç application/json¡¢application/xml
+            * å†…å®¹åå•†ï¼š
+            * é’ˆå¯¹ä¸€ä¸ªå“åº”ï¼Œå½“æœ‰å¤šç§è¡¨è¿°æ ¼å¼çš„æ—¶å€™ï¼Œé€‰å–æœ€ä½³çš„ä¸€ä¸ªè¡¨è¿°ï¼Œä¾‹å¦‚ application/jsonã€application/xml
             * 
-            * Accept Header Ö¸Ã÷·şÎñÆ÷Êä³ö¸ñÊ½£¬¶ÔÓ¦ ASP.NET Core ÀïµÄ Output Formatters
-            * Èç¹û·şÎñÆ÷²»Ö§³Ö¿Í»§¶ËÇëÇóµÄÃ½ÌåÀàĞÍ£¨Media Type£©£¬·µ»Ø×´Ì¬Âë406
+            * Accept Header æŒ‡æ˜æœåŠ¡å™¨è¾“å‡ºæ ¼å¼ï¼Œå¯¹åº” ASP.NET Core é‡Œçš„ Output Formatters
+            * å¦‚æœæœåŠ¡å™¨ä¸æ”¯æŒå®¢æˆ·ç«¯è¯·æ±‚çš„åª’ä½“ç±»å‹ï¼ˆMedia Typeï¼‰ï¼Œè¿”å›çŠ¶æ€ç 406
             * 
-            * Content-Type Header Ö¸Ã÷·şÎñÆ÷ÊäÈë¸ñÊ½£¬¶ÔÓ¦ ASP.NET Core ÀïµÄ Input Formatters
+            * Content-Type Header æŒ‡æ˜æœåŠ¡å™¨è¾“å…¥æ ¼å¼ï¼Œå¯¹åº” ASP.NET Core é‡Œçš„ Input Formatters
             */
 
             /*
-             * .Net Core Ä¬ÈÏÊ¹ÓÃ Problem details for HTTP APIs RFC (7807) ±ê×¼
-             * - ÎªËùĞè´íÎóĞÅÏ¢µÄÓ¦ÓÃ£¬¶¨ÒåÁËÍ¨ÓÃµÄ´íÎó¸ñÊ½
-             * - ¿ÉÒÔÊ¶±ğÎÊÌâÊôÓÚÄÄ¸ö API
+             * .Net Core é»˜è®¤ä½¿ç”¨ Problem details for HTTP APIs RFC (7807) æ ‡å‡†
+             * - ä¸ºæ‰€éœ€é”™è¯¯ä¿¡æ¯çš„åº”ç”¨ï¼Œå®šä¹‰äº†é€šç”¨çš„é”™è¯¯æ ¼å¼
+             * - å¯ä»¥è¯†åˆ«é—®é¢˜å±äºå“ªä¸ª API
              */
 
-            //ÒÔÏÂÊÇÒ»ÖÖÌí¼ÓĞòÁĞ»¯¹¤¾ßµÄĞ´·¨£¬ÔÚ±¾ÏîÄ¿ÖĞÎ´²ÉÓÃ£¨ÊÓÆµP8£©
+            //ä»¥ä¸‹æ˜¯ä¸€ç§æ·»åŠ åºåˆ—åŒ–å·¥å…·çš„å†™æ³•ï¼Œåœ¨æœ¬é¡¹ç›®ä¸­æœªé‡‡ç”¨ï¼ˆè§†é¢‘P8ï¼‰
             //services.AddControllers(options =>
             //{
-            //    //OutputFormatters Ä¬ÈÏÓĞÇÒÖ»ÓĞ Json ¸ñÊ½
-            //    //Ìí¼Ó¶ÔÊä³ö XML ¸ñÊ½µÄÖ§³Ö
-            //    //´ËÊ±Ä¬ÈÏÊä³ö¸ñÊ½ÒÀÈ»ÊÇ Json ,ÒòÎª Json ¸ñÊ½Î»ÓÚµÚÒ»Î»ÖÃ
+            //    //OutputFormatters é»˜è®¤æœ‰ä¸”åªæœ‰ Json æ ¼å¼
+            //    //æ·»åŠ å¯¹è¾“å‡º XML æ ¼å¼çš„æ”¯æŒ
+            //    //æ­¤æ—¶é»˜è®¤è¾“å‡ºæ ¼å¼ä¾ç„¶æ˜¯ Json ,å› ä¸º Json æ ¼å¼ä½äºç¬¬ä¸€ä½ç½®
             //    options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
-            //    //Èç¹ûÔÚ Index 0 Î»ÖÃ²åÈë¶Ô XML ¸ñÊ½µÄÖ§³Ö£¬ÄÇÃ´Ä¬ÈÏÊä³ö¸ñÊ½ÊÇ XML
+            //    //å¦‚æœåœ¨ Index 0 ä½ç½®æ’å…¥å¯¹ XML æ ¼å¼çš„æ”¯æŒï¼Œé‚£ä¹ˆé»˜è®¤è¾“å‡ºæ ¼å¼æ˜¯ XML
             //    //options.OutputFormatters.Insert(0, new XmlDataContractSerializerOutputFormatter());
             //});
 
             services.AddControllers(options =>
             {
-                //ÆôÓÃ406×´Ì¬Âë£¨ÊÓÆµP7£©
+                //å¯ç”¨406çŠ¶æ€ç ï¼ˆè§†é¢‘P7ï¼‰
                 options.ReturnHttpNotAcceptable = true;
 
-                //ÅäÖÃ»º´æ×Öµä£¨ÊÓÆµP46£©
+                //é…ç½®ç¼“å­˜å­—å…¸ï¼ˆè§†é¢‘P46ï¼‰
                 //options.CacheProfiles.Add("120sCacheProfile", new CacheProfile
                 //{
                 //    Duration = 120
                 //});
             })
-                //Ä¬ÈÏ¸ñÊ½È¡¾öÓÚĞòÁĞ»¯¹¤¾ßµÄÌí¼ÓË³Ğò
-                .AddNewtonsoftJson(options =>  //µÚÈı·½ JSON ĞòÁĞ»¯ºÍ·´ĞòÁĞ»¯¹¤¾ß£¨»áÌæ»»µôÔ­±¾Ä¬ÈÏµÄ JSON ĞòÁĞ»¯¹¤¾ß£©£¨ÊÓÆµP32£©
+                //é»˜è®¤æ ¼å¼å–å†³äºåºåˆ—åŒ–å·¥å…·çš„æ·»åŠ é¡ºåº
+                .AddNewtonsoftJson(options =>  //ç¬¬ä¸‰æ–¹ JSON åºåˆ—åŒ–å’Œååºåˆ—åŒ–å·¥å…·ï¼ˆä¼šæ›¿æ¢æ‰åŸæœ¬é»˜è®¤çš„ JSON åºåˆ—åŒ–å·¥å…·ï¼‰ï¼ˆè§†é¢‘P32ï¼‰
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 })
-                .AddXmlDataContractSerializerFormatters() //XML ĞòÁĞ»¯ºÍ·´ĞòÁĞ»¯¹¤¾ß£¨ÊÓÆµP8£©
-                .ConfigureApiBehaviorOptions(options =>   //×Ô¶¨Òå´íÎó±¨¸æ£¨ÊÓÆµP29£©
+                .AddXmlDataContractSerializerFormatters() //XML åºåˆ—åŒ–å’Œååºåˆ—åŒ–å·¥å…·ï¼ˆè§†é¢‘P8ï¼‰
+                .ConfigureApiBehaviorOptions(options =>   //è‡ªå®šä¹‰é”™è¯¯æŠ¥å‘Šï¼ˆè§†é¢‘P29ï¼‰
                 {
-                    //´´½¨Ò»¸öÎ¯ÍĞ context£¬ÔÚ IsValid == false Ê±Ö´ĞĞ
+                    //åˆ›å»ºä¸€ä¸ªå§”æ‰˜ contextï¼Œåœ¨ IsValid == false æ—¶æ‰§è¡Œ
                     options.InvalidModelStateResponseFactory = context =>
                     {
                         var problemDetails = new ValidationProblemDetails(context.ModelState)
                         {
                             Type = "https://www.bilibili.com/video/av77957694",
-                            Title = "³öÏÖ´íÎó",
+                            Title = "å‡ºç°é”™è¯¯",
                             Status = StatusCodes.Status422UnprocessableEntity,
-                            Detail = "Çë¿´ÏêÏ¸ĞÅÏ¢",
+                            Detail = "è¯·çœ‹è¯¦ç»†ä¿¡æ¯",
                             Instance = context.HttpContext.Request.Path
                         };
                         problemDetails.Extensions.Add("traceId", context.HttpContext.TraceIdentifier);
@@ -109,13 +109,13 @@ namespace Routine.APi
 
             services.Configure<MvcOptions>(options =>
             {
-                //È«¾ÖÉèÖÃ NewtonsoftJsonOutputFormatter£¨ÊÓÆµP43£©
+                //å…¨å±€è®¾ç½® NewtonsoftJsonOutputFormatterï¼ˆè§†é¢‘P43ï¼‰
                 var newtonSoftJsonOutputFormatter = options.OutputFormatters
                                                     .OfType<NewtonsoftJsonOutputFormatter>()
                                                     ?.FirstOrDefault();
                 if (newtonSoftJsonOutputFormatter != null)
                 {
-                    //½« NewtonsoftJsonOutputFormatter ÉèÎª "application/vnd.company.hateoas+json" µÈ Media type µÄÊä³ö¸ñÊ½»¯Æ÷
+                    //å°† NewtonsoftJsonOutputFormatter è®¾ä¸º "application/vnd.company.hateoas+json" ç­‰ Media type çš„è¾“å‡ºæ ¼å¼åŒ–å™¨
                     newtonSoftJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.company.hateoas+json");
                     newtonSoftJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.company.friendly+json");
                     newtonSoftJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.company.friendly.hateoas+json");
@@ -124,10 +124,10 @@ namespace Routine.APi
                 }
             });
 
-            //Ê¹ÓÃ AutoMapper£¬É¨Ãèµ±Ç°Ó¦ÓÃÓòµÄËùÓĞ Assemblies Ñ°ÕÒ AutoMapper µÄÅäÖÃÎÄ¼ş£¨ÊÓÆµP12£©
+            //ä½¿ç”¨ AutoMapperï¼Œæ‰«æå½“å‰åº”ç”¨åŸŸçš„æ‰€æœ‰ Assemblies å¯»æ‰¾ AutoMapper çš„é…ç½®æ–‡ä»¶ï¼ˆè§†é¢‘P12ï¼‰
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            //AddScoped Õë¶ÔÃ¿Ò»´Î HTTP ÇëÇó¶¼»á½¨Á¢Ò»¸öĞÂµÄÊµÀı£¨ÊÓÆµP1£©
+            //AddScoped é’ˆå¯¹æ¯ä¸€æ¬¡ HTTP è¯·æ±‚éƒ½ä¼šå»ºç«‹ä¸€ä¸ªæ–°çš„å®ä¾‹ï¼ˆè§†é¢‘P1ï¼‰
             services.AddScoped<ICompanyRepository, CompanyRepository>();
 
             services.AddDbContext<RoutineDbContext>(options =>
@@ -135,18 +135,19 @@ namespace Routine.APi
                 options.UseSqlServer("Data Source=localhost;DataBase=routine;Integrated Security=SSPI");
             });
 
-            //ÇáÁ¿·şÎñ¿ÉÒÔÊ¹ÓÃ Transient
-            //ÅÅĞòÊ¹ÓÃµÄÊôĞÔÓ³Éä·şÎñ£¨ÊÓÆµP37£©
+            //è½»é‡æœåŠ¡å¯ä»¥ä½¿ç”¨ Transientï¼Œæ¯æ¬¡ä»å®¹å™¨ï¼ˆIServiceProviderï¼‰ä¸­è·å–çš„éƒ½æ˜¯ä¸€ä¸ªæ–°çš„å®ä¾‹
+            //æ·±å…¥ç†è§£ä¾èµ–æ³¨å…¥ã€Singletonã€Scopedã€Transient å‚è§ https://www.cnblogs.com/gdsblog/p/8465101.html
+            //æ’åºä½¿ç”¨çš„å±æ€§æ˜ å°„æœåŠ¡ï¼ˆè§†é¢‘P37ï¼‰
             services.AddTransient<IPropertyMappingService, PropertyMappingService>();
-            //ÅĞ¶Ï Uri query ×Ö·û´®ÖĞµÄ fields ÊÇ·ñºÏ·¨£¨ÊÓÆµP39£©
+            //åˆ¤æ–­ Uri query å­—ç¬¦ä¸²ä¸­çš„ fields æ˜¯å¦åˆæ³•ï¼ˆè§†é¢‘P39ï¼‰
             services.AddTransient<IPropertyCheckerService, PropertyCheckerService>();
         }
 
-        //Â·ÓÉÖĞ¼ä¼ş This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        //è·¯ç”±ä¸­é—´ä»¶ This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //Ìí¼ÓÖĞ¼ä¼şµÄË³Ğò·Ç³£ÖØÒª£¬Èç¹ûÄã°ÑÊÚÈ¨ÖĞ¼ä¼ş·ÅÔÚÁËControllerµÄºó±ß£¬
-            //ÄÇÃ´¼´Ê¹ĞèÒªÊÚÈ¨£¬ÄÇÃ´ÇëÇóÒ²»áÏÈµ½´ïController²¢Ö´ĞĞÀïÃæµÄ´úÂë£¬ÕâÑùµÄ»°ÊÚÈ¨¾ÍÃ»ÓĞÒâÒåÁË¡££¨ÊÓÆµP1£©
+            //æ·»åŠ ä¸­é—´ä»¶çš„é¡ºåºéå¸¸é‡è¦ï¼Œå¦‚æœä½ æŠŠæˆæƒä¸­é—´ä»¶æ”¾åœ¨äº†Controllerçš„åè¾¹ï¼Œ
+            //é‚£ä¹ˆå³ä½¿éœ€è¦æˆæƒï¼Œé‚£ä¹ˆè¯·æ±‚ä¹Ÿä¼šå…ˆåˆ°è¾¾Controllerå¹¶æ‰§è¡Œé‡Œé¢çš„ä»£ç ï¼Œè¿™æ ·çš„è¯æˆæƒå°±æ²¡æœ‰æ„ä¹‰äº†ã€‚ï¼ˆè§†é¢‘P1ï¼‰
 
             if (env.IsDevelopment())
             {
@@ -154,7 +155,7 @@ namespace Routine.APi
             }
             else
             {
-                //500 ´íÎóĞÅÏ¢
+                //500 é”™è¯¯ä¿¡æ¯
                 app.UseExceptionHandler(appBuilder =>
                 {
                     appBuilder.Run(async context =>
@@ -165,9 +166,9 @@ namespace Routine.APi
                 });
             }
 
-            //»º´æÖĞ¼ä¼ş
-            //app.UseResponseCaching();  //£¨ÊÓÆµP46£©
-            app.UseHttpCacheHeaders(); //£¨ÊÓÆµP48£©
+            //ç¼“å­˜ä¸­é—´ä»¶
+            //app.UseResponseCaching();  //ï¼ˆè§†é¢‘P46ï¼‰
+            app.UseHttpCacheHeaders(); //ï¼ˆè§†é¢‘P48ï¼‰
 
             app.UseRouting();
 
