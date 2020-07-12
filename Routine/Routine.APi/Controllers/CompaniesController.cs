@@ -111,7 +111,7 @@ namespace Routine.APi.Controllers
         #region HttpGet
 
         [HttpGet(Name = nameof(GetCompanies))]
-        [HttpHead] //添加对 Http Head 的支持，Head 请求只会返回 Header 信息，没有 Body（视频P16）
+        [HttpHead] //添加对 Http Head 请求的支持，Http Head 请求只获取 Header 信息，没有 Body（视频P16）
         public async Task<IActionResult> GetCompanies([FromQuery]CompanyDtoParameters parameters,
                                                       [FromHeader(Name="Accept")]
                                                       string acceptMediaType)
@@ -127,7 +127,7 @@ namespace Routine.APi.Controllers
             //无论请求的是 Full Dto 还是 Friendly Dto，都允许按照 Full Dto 中的属性进行排序
             if (!_propertyMappingService.ValidMappingExistsFor<CompanyFullDto, Company>(parameters.OrderBy))
             {
-                return BadRequest();  //返回状态码400
+                return BadRequest();
             }
 
             //判断 Uri Query 中的 fields 字符串是否合法（视频P39）
@@ -190,9 +190,9 @@ namespace Routine.APi.Controllers
 
         [HttpGet("{companyId}", Name = nameof(GetCompany))]  //可省略 [Route("{companyId}")]
 
-        //本项目在 Startup.cs 中对输出格式化器进行全局设置，不再使用 Produces 属性进行局部设置
-        //[Produces("application/json",//当遇到以下 Accept 值时，实际返回 application/json（视频P43）
-        //                             //将忽视 Startup.cs 中对输出格式化器的全局设置，导致当前方法不支持 xml
+        //已在 Startup.cs 中对输出格式化器进行全局设置，因此不再使用 Produces 属性进行局部设置
+        //以下代码启用后将忽视 Startup.cs 中对输出格式化器的全局设置，导致 GetCompany 不支持 xml
+        //[Produces("application/json",//当收到以下 Accept 值时，实际返回 application/json（视频P43）                             
         //                             "application/vnd.company.hateoas+json",
         //                             "application/vnd.company.friendly+json",
         //                             "application/vnd.company.friendly.hateoas+json",
